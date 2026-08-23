@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1653288921786706260}
   - component: {fileID: 4238009992062306485}
+  - component: {fileID: 1935920819155053894}
   m_Layer: 5
   m_Name: MemoryBar
   m_TagString: Untagged
@@ -90,6 +91,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1935920819155053894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 139238472266082170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f09c289bb3fb5aa47bd6dcf6181c1201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MemoryBar
 --- !u!1 &2261996177802276352
 GameObject:
   m_ObjectHideFlags: 0

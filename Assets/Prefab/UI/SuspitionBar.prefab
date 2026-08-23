@@ -165,6 +165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1797925996573335685}
   - component: {fileID: 7219496108893083494}
+  - component: {fileID: 6735918056551018094}
   m_Layer: 5
   m_Name: SuspitionBar
   m_TagString: Untagged
@@ -245,6 +246,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6735918056551018094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5806915321830845063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d258a75d4b038864d8b128955559829b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SuspitionBar
 --- !u!1 &7436856876958721030
 GameObject:
   m_ObjectHideFlags: 0
