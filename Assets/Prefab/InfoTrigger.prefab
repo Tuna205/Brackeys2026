@@ -128,6 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InfoTrigger
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   transferAmount: 10
+  transferInterval: 1
 --- !u!54 &734781315646008527
 Rigidbody:
   m_ObjectHideFlags: 0

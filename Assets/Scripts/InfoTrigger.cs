@@ -5,9 +5,11 @@ public class InfoTrigger : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions;
     [SerializeField, Min(0f)] private float transferAmount = 10f;
+    [SerializeField, Min(0.01f)] private float transferInterval = 1f;
 
     private InputAction interactAction;
     private bool playerInside;
+    private float nextTransferTime;
 
     private void Awake()
     {
@@ -49,7 +51,21 @@ public class InfoTrigger : MonoBehaviour
             return;
         }
 
-        Info.instance.Add(transferAmount);
-        Memory.instance.Add(-transferAmount);
+        if (Time.time < nextTransferTime)
+        {
+            return;
+        }
+
+        float availableMemory = Memory.instance.Value;
+        float amount = Mathf.Min(transferAmount, availableMemory);
+
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        Memory.instance.Add(-amount);
+        Info.instance.Add(amount);
+        nextTransferTime = Time.time + transferInterval;
     }
 }
