@@ -1621,7 +1621,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
   m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -2810,6 +2810,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Suspition
   value: 0
+  decayAmount: 1
+  decayInterval: 1
 --- !u!4 &1107397790
 Transform:
   m_ObjectHideFlags: 0
@@ -5057,7 +5059,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7219496108893083494, guid: ce31fa9d7ed16a541a048a98165511c4, type: 3}
       propertyPath: m_Value
-      value: 0.5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219496108893083494, guid: ce31fa9d7ed16a541a048a98165511c4, type: 3}
+      propertyPath: m_MaxValue
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7219496108893083494, guid: ce31fa9d7ed16a541a048a98165511c4, type: 3}
       propertyPath: m_WholeNumbers
@@ -5166,6 +5172,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2888404816818733189, guid: cea1bdf750d7f704f865dbf60dc77660, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238009992062306485, guid: cea1bdf750d7f704f865dbf60dc77660, type: 3}
+      propertyPath: m_Value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238009992062306485, guid: cea1bdf750d7f704f865dbf60dc77660, type: 3}
+      propertyPath: m_MaxValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4238009992062306485, guid: cea1bdf750d7f704f865dbf60dc77660, type: 3}
+      propertyPath: m_WholeNumbers
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8544269116474134987, guid: cea1bdf750d7f704f865dbf60dc77660, type: 3}

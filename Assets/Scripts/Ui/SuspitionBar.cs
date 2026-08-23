@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,22 +11,16 @@ public class SuspitionBar : MonoBehaviour
     private void Awake()
     {
         slider = GetComponent<Slider>();
-        suspition = FindAnyObjectByType<Suspition>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        if (suspition == null)
-        {
-            Debug.LogError("SuspitionBar could not find a Suspition component in the scene.", this);
-            return;
-        }
-
+        suspition = Suspition.instance;
         suspition.Changed += Display;
         Display(suspition.Value);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (suspition != null)
         {
@@ -35,6 +30,7 @@ public class SuspitionBar : MonoBehaviour
 
     private void Display(float value)
     {
-        slider.value = value / 100f;
+        Debug.LogWarning(value);
+        slider.value = value;
     }
 }

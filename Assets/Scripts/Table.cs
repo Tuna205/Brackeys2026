@@ -3,7 +3,7 @@ using UnityEngine;
 public class Table : MonoBehaviour
 {
     [SerializeField, Min(0f)] private float perimeterRadius = 1f;
-    [SerializeField, Min(0f)] private float suspicionPerInterval = 10f;
+    [SerializeField, Min(0f)] private float suspicionPerInterval = 11f;
     [SerializeField, Min(0.01f)] private float intervalSeconds = 1f;
 
     private Transform player;
