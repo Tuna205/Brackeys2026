@@ -2797,6 +2797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5356d585aafc5d546b9ee6dabf72e342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Memory
+  value: 0
 --- !u!114 &1107397789
 MonoBehaviour:
   m_ObjectHideFlags: 0

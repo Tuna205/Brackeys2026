@@ -1,16 +1,51 @@
+using System;
 using UnityEngine;
 
 public class Memory : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static Memory instance { get; private set; }
+
+    public event Action<float> Changed;
+
+    [SerializeField, Range(0f, 100f)] private float value;
+
+    public float Value => value;
+
+    private void Awake()
     {
-        
+        if (instance != null)
+        {
+            Debug.LogError("More than one Memory component exists in the scene.", this);
+            Destroy(this);
+            return;
+        }
+
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
+    public void SetValue(float newValue)
+    {
+        float clampedValue = Mathf.Clamp(newValue, 0f, 100f);
+        if (Mathf.Approximately(value, clampedValue))
+        {
+            return;
+        }
+
+        value = clampedValue;
+        Debug.LogWarning("Mem value: " + value);
+        Changed?.Invoke(value);
+    }
+
+    public void Add(float amount)
+    {
+        SetValue(value + amount);
     }
 }

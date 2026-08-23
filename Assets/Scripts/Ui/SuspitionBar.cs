@@ -30,7 +30,6 @@ public class SuspitionBar : MonoBehaviour
 
     private void Display(float value)
     {
-        Debug.LogWarning(value);
         slider.value = value;
     }
 }
