@@ -1,16 +1,44 @@
+using System;
 using UnityEngine;
 
 public class Info : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static Info instance { get; private set; }
+
+    public event Action<float> Changed;
+
+    [SerializeField] private float value;
+
+    public float Value => value;
+
+    private void Awake()
     {
-        
+        if (instance != null)
+        {
+            Debug.LogError("More than one Info component exists in the scene.", this);
+            Destroy(this);
+            return;
+        }
+
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
+    public void SetValue(float newValue)
+    {
+        value = newValue;
+        Changed?.Invoke(value);
+    }
+
+    public void Add(float amount)
+    {
+        SetValue(value + amount);
     }
 }
