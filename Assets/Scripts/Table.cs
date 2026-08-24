@@ -10,6 +10,8 @@ public class Table : MonoBehaviour
     private Transform player;
     private float timeInside;
 
+    public bool IsPlayerInside { get; private set; }
+
     private void Start()
     {
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -33,9 +35,9 @@ public class Table : MonoBehaviour
     private void Update()
     {
         Vector3 offset = player.position - transform.position;
-        bool isInside = offset.sqrMagnitude <= perimeterRadius * perimeterRadius;
+        IsPlayerInside = offset.sqrMagnitude <= perimeterRadius * perimeterRadius;
 
-        if (!isInside)
+        if (!IsPlayerInside)
         {
             timeInside = 0f;
             return;

@@ -87,6 +87,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bartender
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9d7bd536372d86240af628c9d399522f, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
