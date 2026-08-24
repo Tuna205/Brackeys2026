@@ -10,9 +10,9 @@ public class Drink : MonoBehaviour
     {
         Empty,
         Patient,
-        Inpatient,
         Angry,
         WaitingForDrinks,
+        WaitingForDrinksAngry,
         DrinkingAndGivingInfo
     }
 
@@ -38,6 +38,7 @@ public class Drink : MonoBehaviour
     private float stateDuration = 15f;
     private float angryDuration = 30f;
     private float waitingForDrinksDuration = 30f;
+    private float waitingForDrinksAngryDuration = 15f;
     private float drinkingAndGivingInfoDuration = 30f;
 
     [Header("Penalty")]
@@ -154,6 +155,7 @@ public class Drink : MonoBehaviour
             drinkIndicator.SetActive(false);
         }
 
+        SetActiveBeerScale(new Vector3(0.2f,0.2f,0.2f));
         DisableAllSoldiers();
     }
 
@@ -169,7 +171,7 @@ public class Drink : MonoBehaviour
             return;
         }
 
-        if (State == DrinkState.WaitingForDrinks)
+        if (State == DrinkState.WaitingForDrinks || State == DrinkState.WaitingForDrinksAngry)
         {
             TryDeliverDrinks();
         }
@@ -190,9 +192,6 @@ public class Drink : MonoBehaviour
 
             SetState(DrinkState.Patient);
             EnableRandomSoldiers();
-
-            yield return new WaitForSeconds(stateDuration);
-            SetState(DrinkState.Inpatient);
 
             yield return new WaitForSeconds(stateDuration);
             SetState(DrinkState.Angry);
@@ -219,6 +218,19 @@ public class Drink : MonoBehaviour
         yield return new WaitForSeconds(waitingForDrinksDuration);
 
         if (State != DrinkState.WaitingForDrinks)
+        {
+            yield break;
+        }
+
+        SetState(DrinkState.WaitingForDrinksAngry);
+        requestLoop = StartCoroutine(WaitForDrinksAngry());
+    }
+
+    private IEnumerator WaitForDrinksAngry()
+    {
+        yield return new WaitForSeconds(waitingForDrinksAngryDuration);
+
+        if (State != DrinkState.WaitingForDrinksAngry)
         {
             yield break;
         }
@@ -294,6 +306,11 @@ public class Drink : MonoBehaviour
             RestoreSoldierMaterials();
         }
 
+        if (State == DrinkState.WaitingForDrinksAngry && newState != DrinkState.WaitingForDrinksAngry)
+        {
+            SetActiveBeerScale(Vector3.one);
+        }
+
         State = newState;
 
         if (newState == DrinkState.Empty)
@@ -310,6 +327,13 @@ public class Drink : MonoBehaviour
             return;
         }
 
+        if (newState == DrinkState.WaitingForDrinksAngry)
+        {
+            drinkIndicator.SetActive(false);
+            SetActiveBeerScale(new Vector3(0.4f, 0.4f, 0.4f));
+            return;
+        }
+
         if (newState == DrinkState.DrinkingAndGivingInfo)
         {
             drinkIndicator.SetActive(false);
@@ -321,7 +345,6 @@ public class Drink : MonoBehaviour
         Material material = newState switch
         {
             DrinkState.Patient => greenMaterial,
-            DrinkState.Inpatient => yellowMaterial,
             DrinkState.Angry => redMaterial,
             _ => null
         };
@@ -408,6 +431,23 @@ public class Drink : MonoBehaviour
             if (beer != null)
             {
                 beer.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void SetActiveBeerScale(Vector3 scale)
+    {
+        foreach (GameObject soldier in soldiers)
+        {
+            if (!soldier.activeSelf)
+            {
+                continue;
+            }
+
+            Transform beer = soldier.transform.Find("Beer");
+            if (beer != null)
+            {
+                beer.localScale = scale;
             }
         }
     }

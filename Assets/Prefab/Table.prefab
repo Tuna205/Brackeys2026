@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86e2dfbc53e7b4c458eb539bad321581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Table
-  perimeterRadius: 2
+  perimeterRadius: 3
   suspicionPerInterval: 10
   memoryPerInterval: 25
   intervalSeconds: 1
@@ -72,12 +72,6 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 70b8c4ef4216db2498941c6ddb3f142a, type: 2}
   soldierList: {fileID: 5835014519109288855}
   blackMaterial: {fileID: 2100000, guid: 4d0d878d684d1784e92d506c9b392e05, type: 2}
-  minimumRequestDelay: 20
-  maximumRequestDelay: 80
-  stateDuration: 15
-  angryDuration: 30
-  waitingForDrinksDuration: 30
-  drinkingAndGivingInfoDuration: 30
   suspicionPenalty: 40
 --- !u!1 &736949824041118113
 GameObject:
