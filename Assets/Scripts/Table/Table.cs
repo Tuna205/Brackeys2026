@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Table : MonoBehaviour
 {
-    [SerializeField, Min(0f)] private float perimeterRadius = 1f;
-    [SerializeField, Min(0f)] private float suspicionPerInterval = 11f;
-    [SerializeField, Min(0f)] private float memoryPerInterval = 25f;
-    [SerializeField, Min(0.01f)] private float intervalSeconds = 1f;
+    private float perimeterRadius = 2.5f;
+    private float suspicionPerInterval = 11f;
+    private float memoryPerInterval = 25f;
+    private float intervalSeconds = 1f;
 
     private Transform player;
     private Drink drink;

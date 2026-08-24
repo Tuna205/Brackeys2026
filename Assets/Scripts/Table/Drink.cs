@@ -38,8 +38,7 @@ public class Drink : MonoBehaviour
     private const float WaitingForDrinksAngryDuration = 15f;
     private const float DrinkingAndGivingInfoDuration = 30f;
 
-    [Header("Penalty")]
-    [SerializeField, Min(0f)] private float suspicionPenalty = 40f;
+    private float suspicionPenalty = 40f;
 
     public DrinkState State { get; private set; }
 

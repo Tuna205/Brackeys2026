@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 public class InfoTrigger : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions = null;
-    [SerializeField, Min(0f)] private float transferAmount = 10f;
-    [SerializeField, Min(0.01f)] private float transferInterval = 1f;
+    private float transferAmount = 10f;
+    private float transferInterval = 1f;
 
     private InputAction interactAction;
     private readonly HashSet<Collider> playerCollidersInside = new();
