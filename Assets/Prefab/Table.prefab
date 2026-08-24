@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5996837284735934074}
   - component: {fileID: 5169763915026388687}
+  - component: {fileID: 7348912056134729981}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -44,12 +45,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86e2dfbc53e7b4c458eb539bad321581, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Table
   perimeterRadius: 2
   suspicionPerInterval: 10
   memoryPerInterval: 25
   intervalSeconds: 1
+--- !u!114 &7348912056134729981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 485300716901061150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c728d1bfd58f9949a570ceeff256a88, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Drink
+  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  drinkIndicator: {fileID: 3322590922952960687}
+  indicatorRenderer: {fileID: 3324919796760720507}
+  greenMaterial: {fileID: 2100000, guid: 2c1e9cf8a26241d46ae7b03dc87f3215, type: 2}
+  yellowMaterial: {fileID: 2100000, guid: 512d7f4075c4d5248b6e4eedc115d526, type: 2}
+  redMaterial: {fileID: 2100000, guid: 70b8c4ef4216db2498941c6ddb3f142a, type: 2}
+  minimumRequestDelay: 20
+  maximumRequestDelay: 80
+  stateDuration: 15
+  angryDuration: 30
+  suspicionPenalty: 40
 --- !u!1 &1944227474325791856
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,10 +198,8 @@ GameObject:
   - component: {fileID: 1951887374667261926}
   - component: {fileID: 3324919796760720507}
   - component: {fileID: 5211052790807223708}
-  - component: {fileID: 327278428578464012}
-  - component: {fileID: 1523849681036367515}
   m_Layer: 0
-  m_Name: Drink
+  m_Name: Drink_Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,27 +298,3 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.50000006
   m_Center: {x: 0.00000012516976, y: 0.00000021904987, z: -0.000000491553}
---- !u!114 &327278428578464012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3322590922952960687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c728d1bfd58f9949a570ceeff256a88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DrinkIndicator
---- !u!114 &1523849681036367515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3322590922952960687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c728d1bfd58f9949a570ceeff256a88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Drink
