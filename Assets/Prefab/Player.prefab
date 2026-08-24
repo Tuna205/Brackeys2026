@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 317245193657071917}
   - component: {fileID: 4526185024689366766}
+  - component: {fileID: 6294813752406817234}
+  - component: {fileID: 3653049376971823461}
+  - component: {fileID: 2622232263812784233}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -47,6 +50,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   moveSpeed: 5
+--- !u!114 &6294813752406817234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461666294468134118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9705a113bf47ab48893eb3b663be0d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
+  beers: 000000000000000000000000010000000100000001000000020000000200000002000000
+--- !u!54 &3653049376971823461
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461666294468134118}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
+--- !u!136 &2622232263812784233
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461666294468134118}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &5886637248695562416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55,6 +121,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 317245193657071917}
     m_Modifications:
+    - target: {fileID: 919132149155446097, guid: 9d7bd536372d86240af628c9d399522f, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3b704a4a2af91104e9b32654d0da66f9, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -86,10 +156,6 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 3b704a4a2af91104e9b32654d0da66f9, type: 3}
       propertyPath: m_Name
       value: SM_Bartender
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 9d7bd536372d86240af628c9d399522f, type: 3}
-      propertyPath: m_TagString
-      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

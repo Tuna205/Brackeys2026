@@ -8,23 +8,33 @@ public class Table : MonoBehaviour
     [SerializeField, Min(0.01f)] private float intervalSeconds = 1f;
 
     private Transform player;
+    private Drink drink;
     private float timeInside;
 
     public bool IsPlayerInside { get; private set; }
 
     private void Start()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject == null)
+        if (Player.instance == null)
         {
-            Debug.LogError("Table could not find a GameObject tagged Player.", this);
+            Debug.LogError("Table could not find the Player singleton.", this);
             enabled = false;
             return;
         }
 
+        GameObject playerObject = Player.instance.gameObject;
+
         if (Suspition.instance == null)
         {
             Debug.LogError("Table could not find the Suspition singleton.", this);
+            enabled = false;
+            return;
+        }
+
+        drink = GetComponent<Drink>();
+        if (drink == null)
+        {
+            Debug.LogError("Table needs a Drink component to control memory gain.", this);
             enabled = false;
             return;
         }
@@ -47,7 +57,12 @@ public class Table : MonoBehaviour
         while (timeInside >= intervalSeconds)
         {
             Suspition.instance.Add(suspicionPerInterval);
-            Memory.instance.Add(memoryPerInterval);
+
+            if (drink.State == Drink.DrinkState.DrinkingAndGivingInfo)
+            {
+                Memory.instance.Add(memoryPerInterval);
+            }
+
             timeInside -= intervalSeconds;
         }
     }

@@ -1,19 +1,22 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InfoTrigger : MonoBehaviour
 {
-    [SerializeField] private InputActionAsset inputActions;
+    [SerializeField] private InputActionAsset inputActions = null;
     [SerializeField, Min(0f)] private float transferAmount = 10f;
     [SerializeField, Min(0.01f)] private float transferInterval = 1f;
 
     private InputAction interactAction;
-    private bool playerInside;
+    private readonly HashSet<Collider> playerCollidersInside = new();
     private float nextTransferTime;
+
+    private bool PlayerInside => playerCollidersInside.Count > 0;
 
     private void Awake()
     {
-        interactAction = inputActions.FindAction("Player/Jump", true);
+        interactAction = inputActions.FindAction("Player/Jump", true).Clone();
     }
 
     private void OnEnable()
@@ -24,29 +27,36 @@ public class InfoTrigger : MonoBehaviour
 
     private void OnDisable()
     {
-        interactAction.performed -= OnInteract;
-        interactAction.Disable();
+        if (interactAction != null)
+        {
+            interactAction.performed -= OnInteract;
+            interactAction.Disable();
+        }
+
+        playerCollidersInside.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        interactAction?.Dispose();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (IsPlayerCollider(other))
         {
-            playerInside = true;
+            playerCollidersInside.Add(other);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            playerInside = false;
-        }
+        playerCollidersInside.Remove(other);
     }
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        if (!playerInside)
+        if (!PlayerInside)
         {
             return;
         }
@@ -67,5 +77,12 @@ public class InfoTrigger : MonoBehaviour
         Memory.instance.Add(-amount);
         Info.instance.Add(amount);
         nextTransferTime = Time.time + transferInterval;
+    }
+
+    private static bool IsPlayerCollider(Collider other)
+    {
+        return Player.instance != null &&
+            (other.gameObject == Player.instance.gameObject ||
+             other.transform.IsChildOf(Player.instance.transform));
     }
 }
