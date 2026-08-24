@@ -37,6 +37,8 @@ public class Drink : MonoBehaviour
     private const float WaitingForDrinksDuration = 30f;
     private const float WaitingForDrinksAngryDuration = 15f;
     private const float DrinkingAndGivingInfoDuration = 30f;
+    private const int MinimumSoldiersPerTable = 2;
+    private const int MaximumSoldiersPerTable = 4;
 
     private float suspicionPenalty = 40f;
 
@@ -403,8 +405,9 @@ public class Drink : MonoBehaviour
     {
         DisableAllSoldiers();
 
-        int maximumSoldiers = Mathf.Min(6, soldiers.Count);
-        int soldiersToEnable = UnityEngine.Random.Range(1, maximumSoldiers + 1);
+        int maximumSoldiers = Mathf.Min(MaximumSoldiersPerTable, soldiers.Count);
+        int minimumSoldiers = Mathf.Min(MinimumSoldiersPerTable, maximumSoldiers);
+        int soldiersToEnable = UnityEngine.Random.Range(minimumSoldiers, maximumSoldiers + 1);
 
         List<GameObject> availableSoldiers = new(soldiers);
         for (int i = 0; i < soldiersToEnable; i++)
