@@ -16,8 +16,6 @@ public class Drink : MonoBehaviour
         DrinkingAndGivingInfo
     }
 
-    public static event Action<Drink> SoldiersLeft;
-
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions = null;
 
@@ -32,28 +30,28 @@ public class Drink : MonoBehaviour
     [SerializeField] private Transform soldierList = null;
     [SerializeField] private Material blackMaterial = null;
 
-    [Header("Timing")]
-    private float minimumRequestDelay = 0f; //20
-    private float maximumRequestDelay = 10f; //80
-    private float stateDuration = 15f;
-    private float angryDuration = 30f;
-    private float waitingForDrinksDuration = 30f;
-    private float waitingForDrinksAngryDuration = 15f;
-    private float drinkingAndGivingInfoDuration = 30f;
+    private const float MinimumRequestDelay = 0f;
+    private const float MaximumRequestDelay = 10f;
+    private const float PatientDuration = 15f;
+    private const float AngryDuration = 30f;
+    private const float WaitingForDrinksDuration = 30f;
+    private const float WaitingForDrinksAngryDuration = 15f;
+    private const float DrinkingAndGivingInfoDuration = 30f;
 
     [Header("Penalty")]
     [SerializeField, Min(0f)] private float suspicionPenalty = 40f;
 
     public DrinkState State { get; private set; }
-    public bool IsRequestingDrink => drinkIndicator != null && drinkIndicator.activeSelf;
 
     private Table table;
     private InputAction interactAction;
-    private Coroutine requestLoop;
+    private Coroutine stateTimer;
     private readonly List<GameObject> soldiers = new();
     private readonly List<Player.BeerTypes> requiredBeers = new();
     private readonly Dictionary<Renderer, Material[]> originalSoldierMaterials = new();
     private Player player;
+    private bool hasEnteredState;
+    private bool stateMachineIsRunning;
 
     private void Awake()
     {
@@ -119,7 +117,7 @@ public class Drink : MonoBehaviour
             }
         }
 
-        SetState(DrinkState.Empty);
+        TransitionTo(DrinkState.Empty);
     }
 
     private void OnEnable()
@@ -137,9 +135,9 @@ public class Drink : MonoBehaviour
             return;
         }
 
-        GameObject playerObject = Player.instance.gameObject;
-        player = playerObject.GetComponent<Player>();
-        requestLoop = StartCoroutine(DrinkRequestLoop());
+        player = Player.instance;
+        stateMachineIsRunning = true;
+        TransitionTo(DrinkState.Empty);
     }
 
     private void OnDisable()
@@ -155,7 +153,7 @@ public class Drink : MonoBehaviour
             drinkIndicator.SetActive(false);
         }
 
-        SetActiveBeerScale(new Vector3(0.2f,0.2f,0.2f));
+        SetActiveBeerScale(Vector3.one * 0.2f);
         DisableAllSoldiers();
     }
 
@@ -171,73 +169,213 @@ public class Drink : MonoBehaviour
             return;
         }
 
-        if (State == DrinkState.WaitingForDrinks || State == DrinkState.WaitingForDrinksAngry)
+        switch (State)
         {
-            TryDeliverDrinks();
-        }
-        else if (State != DrinkState.Empty && State != DrinkState.DrinkingAndGivingInfo)
-        {
-            EnterWaitingForDrinksState();
-        }
-    }
+            case DrinkState.Patient:
+            case DrinkState.Angry:
+                TransitionTo(DrinkState.WaitingForDrinks);
+                break;
 
-    private IEnumerator DrinkRequestLoop()
-    {
-        while (true)
-        {
-            SetState(DrinkState.Empty);
-
-            float requestDelay = UnityEngine.Random.Range(minimumRequestDelay, maximumRequestDelay);
-            yield return new WaitForSeconds(requestDelay);
-
-            SetState(DrinkState.Patient);
-            EnableRandomSoldiers();
-
-            yield return new WaitForSeconds(stateDuration);
-            SetState(DrinkState.Angry);
-
-            yield return new WaitForSeconds(angryDuration);
-            CauseSoldiersLeaving();
+            case DrinkState.WaitingForDrinks:
+            case DrinkState.WaitingForDrinksAngry:
+                TryDeliverDrinks();
+                break;
         }
     }
 
-    private void EnterWaitingForDrinksState()
+    private void TransitionTo(DrinkState nextState)
     {
-        if (requestLoop != null)
+        if (hasEnteredState)
         {
-            StopCoroutine(requestLoop);
+            ExitState(State);
         }
 
-        SetState(DrinkState.WaitingForDrinks);
+        State = nextState;
+        hasEnteredState = true;
+        EnterState(State);
+    }
+
+    private void EnterState(DrinkState state)
+    {
+        switch (state)
+        {
+            case DrinkState.Empty:
+                OnEnterEmpty();
+                break;
+            case DrinkState.Patient:
+                OnEnterPatient();
+                break;
+            case DrinkState.Angry:
+                OnEnterAngry();
+                break;
+            case DrinkState.WaitingForDrinks:
+                OnEnterWaitingForDrinks();
+                break;
+            case DrinkState.WaitingForDrinksAngry:
+                OnEnterWaitingForDrinksAngry();
+                break;
+            case DrinkState.DrinkingAndGivingInfo:
+                OnEnterDrinkingAndGivingInfo();
+                break;
+        }
+    }
+
+    private void ExitState(DrinkState state)
+    {
+        switch (state)
+        {
+            case DrinkState.Empty:
+                OnExitEmpty();
+                break;
+            case DrinkState.Patient:
+                OnExitPatient();
+                break;
+            case DrinkState.Angry:
+                OnExitAngry();
+                break;
+            case DrinkState.WaitingForDrinks:
+                OnExitWaitingForDrinks();
+                break;
+            case DrinkState.WaitingForDrinksAngry:
+                OnExitWaitingForDrinksAngry();
+                break;
+            case DrinkState.DrinkingAndGivingInfo:
+                OnExitDrinkingAndGivingInfo();
+                break;
+        }
+    }
+
+    private void OnEnterEmpty()
+    {
+        drinkIndicator.SetActive(false);
+        requiredBeers.Clear();
+        DisableAllSoldiers();
+
+        if (stateMachineIsRunning)
+        {
+            float requestDelay = UnityEngine.Random.Range(MinimumRequestDelay, MaximumRequestDelay);
+            StartStateTimer(requestDelay, () => TransitionTo(DrinkState.Patient));
+        }
+    }
+
+    private void OnExitEmpty()
+    {
+        StopStateTimer();
+    }
+
+    private void OnEnterPatient()
+    {
+        ShowDrinkIndicator(greenMaterial);
+        EnableRandomSoldiers();
+        StartStateTimer(PatientDuration, () => TransitionTo(DrinkState.Angry));
+    }
+
+    private void OnExitPatient()
+    {
+        StopStateTimer();
+    }
+
+    private void OnEnterAngry()
+    {
+        ShowDrinkIndicator(redMaterial);
+        StartStateTimer(AngryDuration, LeaveAndReturnToEmpty);
+    }
+
+    private void OnExitAngry()
+    {
+        StopStateTimer();
+    }
+
+    private void OnEnterWaitingForDrinks()
+    {
+        drinkIndicator.SetActive(false);
         EnableBeersForActiveSoldiers();
-        requestLoop = StartCoroutine(WaitForDrinks());
+        StartStateTimer(
+            WaitingForDrinksDuration,
+            () => TransitionTo(DrinkState.WaitingForDrinksAngry));
     }
 
-    private IEnumerator WaitForDrinks()
+    private void OnExitWaitingForDrinks()
     {
-        yield return new WaitForSeconds(waitingForDrinksDuration);
-
-        if (State != DrinkState.WaitingForDrinks)
-        {
-            yield break;
-        }
-
-        SetState(DrinkState.WaitingForDrinksAngry);
-        requestLoop = StartCoroutine(WaitForDrinksAngry());
+        StopStateTimer();
     }
 
-    private IEnumerator WaitForDrinksAngry()
+    private void OnEnterWaitingForDrinksAngry()
     {
-        yield return new WaitForSeconds(waitingForDrinksAngryDuration);
+        drinkIndicator.SetActive(false);
+        SetActiveBeerScale(Vector3.one * 0.4f);
+        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAndReturnToEmpty);
+    }
 
-        if (State != DrinkState.WaitingForDrinksAngry)
+    private void OnExitWaitingForDrinksAngry()
+    {
+        StopStateTimer();
+        SetActiveBeerScale(Vector3.one);
+    }
+
+    private void OnEnterDrinkingAndGivingInfo()
+    {
+        drinkIndicator.SetActive(false);
+        DisableAllBeers();
+        SetActiveSoldierMaterials(greenMaterial);
+        StartStateTimer(DrinkingAndGivingInfoDuration, FinishDrinking);
+    }
+
+    private void OnExitDrinkingAndGivingInfo()
+    {
+        StopStateTimer();
+        RestoreSoldierMaterials();
+    }
+
+    private void StartStateTimer(float duration, Action onFinished)
+    {
+        StopStateTimer();
+        stateTimer = StartCoroutine(RunStateTimer(duration, onFinished));
+    }
+
+    private void StopStateTimer()
+    {
+        if (stateTimer == null)
         {
-            yield break;
+            return;
         }
 
-        requestLoop = null;
+        StopCoroutine(stateTimer);
+        stateTimer = null;
+    }
+
+    private IEnumerator RunStateTimer(float duration, Action onFinished)
+    {
+        yield return new WaitForSeconds(duration);
+        stateTimer = null;
+        onFinished();
+    }
+
+    private void LeaveAndReturnToEmpty()
+    {
         CauseSoldiersLeaving();
-        EnterEmptyState();
+        TransitionTo(DrinkState.Empty);
+    }
+
+    private void FinishDrinking()
+    {
+        DrinkState nextState = UnityEngine.Random.value < 0.5f
+            ? DrinkState.WaitingForDrinks
+            : DrinkState.Empty;
+
+        TransitionTo(nextState);
+    }
+
+    private void ShowDrinkIndicator(Material material)
+    {
+        if (material == null)
+        {
+            Debug.LogError($"Drink is missing the material for its {State} state.", this);
+            return;
+        }
+
+        indicatorRenderer.sharedMaterial = material;
+        drinkIndicator.SetActive(true);
     }
 
     private void TryDeliverDrinks()
@@ -259,104 +397,7 @@ public class Drink : MonoBehaviour
             player.Beers.Remove(requiredBeer);
         }
 
-        if (requestLoop != null)
-        {
-            StopCoroutine(requestLoop);
-        }
-
-        SetState(DrinkState.DrinkingAndGivingInfo);
-        requestLoop = StartCoroutine(DrinkAndGiveInfo());
-    }
-
-    private IEnumerator DrinkAndGiveInfo()
-    {
-        yield return new WaitForSeconds(drinkingAndGivingInfoDuration);
-
-        if (State != DrinkState.DrinkingAndGivingInfo)
-        {
-            yield break;
-        }
-
-        requestLoop = null;
-        if (UnityEngine.Random.value < 0.5f)
-        {
-            EnterWaitingForDrinksState();
-        }
-        else
-        {
-            EnterEmptyState();
-        }
-    }
-
-    private void EnterEmptyState()
-    {
-        if (requestLoop != null)
-        {
-            StopCoroutine(requestLoop);
-        }
-
-        SetState(DrinkState.Empty);
-        requestLoop = StartCoroutine(DrinkRequestLoop());
-    }
-
-    private void SetState(DrinkState newState)
-    {
-        if (State == DrinkState.DrinkingAndGivingInfo && newState != DrinkState.DrinkingAndGivingInfo)
-        {
-            RestoreSoldierMaterials();
-        }
-
-        if (State == DrinkState.WaitingForDrinksAngry && newState != DrinkState.WaitingForDrinksAngry)
-        {
-            SetActiveBeerScale(Vector3.one);
-        }
-
-        State = newState;
-
-        if (newState == DrinkState.Empty)
-        {
-            drinkIndicator.SetActive(false);
-            requiredBeers.Clear();
-            DisableAllSoldiers();
-            return;
-        }
-
-        if (newState == DrinkState.WaitingForDrinks)
-        {
-            drinkIndicator.SetActive(false);
-            return;
-        }
-
-        if (newState == DrinkState.WaitingForDrinksAngry)
-        {
-            drinkIndicator.SetActive(false);
-            SetActiveBeerScale(new Vector3(0.4f, 0.4f, 0.4f));
-            return;
-        }
-
-        if (newState == DrinkState.DrinkingAndGivingInfo)
-        {
-            drinkIndicator.SetActive(false);
-            DisableAllBeers();
-            SetActiveSoldierMaterials(greenMaterial);
-            return;
-        }
-
-        Material material = newState switch
-        {
-            DrinkState.Patient => greenMaterial,
-            DrinkState.Angry => redMaterial,
-            _ => null
-        };
-
-        if (material == null)
-        {
-            Debug.LogError($"Drink is missing the material for its {newState} state.", this);
-            return;
-        }
-
-        indicatorRenderer.sharedMaterial = material;
-        drinkIndicator.SetActive(true);
+        TransitionTo(DrinkState.DrinkingAndGivingInfo);
     }
 
     private void EnableRandomSoldiers()
@@ -477,8 +518,6 @@ public class Drink : MonoBehaviour
 
     private void CauseSoldiersLeaving()
     {
-        SoldiersLeft?.Invoke(this);
-
         if (Suspition.instance == null)
         {
             Debug.LogError("Drink could not find the Suspition singleton.", this);
@@ -486,10 +525,5 @@ public class Drink : MonoBehaviour
         }
 
         Suspition.instance.Add(suspicionPenalty);
-    }
-
-    private void OnValidate()
-    {
-        maximumRequestDelay = Mathf.Max(minimumRequestDelay, maximumRequestDelay);
     }
 }
