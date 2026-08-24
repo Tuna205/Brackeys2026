@@ -393,7 +393,7 @@ public class Drink : MonoBehaviour
 
         foreach (Player.BeerTypes requiredBeer in requiredBeers)
         {
-            player.Beers.Remove(requiredBeer);
+            player.RemoveBeer(requiredBeer);
         }
 
         TransitionTo(DrinkState.DrinkingAndGivingInfo);
