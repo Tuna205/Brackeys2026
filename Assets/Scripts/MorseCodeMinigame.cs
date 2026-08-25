@@ -28,7 +28,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     private const float MaximumSpawnInterval = 1.8f;
     private const float CorrectScore = 10f;
     private const float IncorrectScore = -5f;
-    private const float SuspitionPerTick = 3f;
+    private const float SuspitionPerTick = 10f;
     private const float SuspitionTickInterval = 1f;
 
     [SerializeField] private RectTransform panelRectTransform = null;

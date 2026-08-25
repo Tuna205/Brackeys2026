@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 
 public class Sink : MonoBehaviour
 {
+    private const float SuspitionPenalty = 5f;
+
     [SerializeField] private InputActionAsset inputActions = null;
 
     private readonly HashSet<Collider> playerCollidersInside = new();
@@ -65,9 +67,11 @@ public class Sink : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        if (PlayerInside && Player.instance != null)
+        if (PlayerInside
+            && Player.instance != null
+            && Player.instance.RemoveLastBeer())
         {
-            Player.instance.RemoveLastBeer();
+            Suspition.instance?.Add(SuspitionPenalty);
         }
     }
 

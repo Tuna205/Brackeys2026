@@ -1081,8 +1081,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Suspition
   value: 0
-  decayAmount: 1
-  decayInterval: 1
 --- !u!4 &1107397790
 Transform:
   m_ObjectHideFlags: 0
