@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Table : MonoBehaviour
 {
-    private float perimeterRadius = 2.5f;
+    private float perimeterRadius = 2f;
     private float suspicionPerInterval = 11f;
     private float memoryPerInterval = 25f;
     private float intervalSeconds = 1f;

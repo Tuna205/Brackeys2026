@@ -40,7 +40,7 @@ public class Drink : MonoBehaviour
     private const int MinimumSoldiersPerTable = 2;
     private const int MaximumSoldiersPerTable = 4;
 
-    private float suspicionPenalty = 40f;
+    private float suspicionPenalty = 30f;
 
     public DrinkState State { get; private set; }
 
@@ -108,14 +108,6 @@ public class Drink : MonoBehaviour
         {
             GameObject soldier = soldierList.GetChild(i).gameObject;
             soldiers.Add(soldier);
-
-            foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>(true))
-            {
-                if (soldierRenderer.transform.name != "Beer")
-                {
-                    originalSoldierMaterials.Add(soldierRenderer, soldierRenderer.sharedMaterials);
-                }
-            }
         }
 
         TransitionTo(DrinkState.Empty);
@@ -279,7 +271,7 @@ public class Drink : MonoBehaviour
     private void OnEnterAngry()
     {
         ShowDrinkIndicator(redMaterial);
-        StartStateTimer(AngryDuration, LeaveAndReturnToEmpty);
+        StartStateTimer(AngryDuration, LeaveAngryAndReturnToEmpty);
     }
 
     private void OnExitAngry()
@@ -305,7 +297,7 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         SetActiveBeerScale(Vector3.one * 0.4f);
-        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAndReturnToEmpty);
+        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngryAndReturnToEmpty);
     }
 
     private void OnExitWaitingForDrinksAngry()
@@ -352,9 +344,9 @@ public class Drink : MonoBehaviour
         onFinished();
     }
 
-    private void LeaveAndReturnToEmpty()
+    private void LeaveAngryAndReturnToEmpty()
     {
-        CauseSoldiersLeaving();
+        CauseSoldiersLeavingAngry();
         TransitionTo(DrinkState.Empty);
     }
 
@@ -497,16 +489,28 @@ public class Drink : MonoBehaviour
 
     private void SetActiveSoldierMaterials(Material material)
     {
-        foreach (KeyValuePair<Renderer, Material[]> soldierRenderer in originalSoldierMaterials)
+        originalSoldierMaterials.Clear();
+
+        foreach (GameObject soldier in soldiers)
         {
-            if (!soldierRenderer.Key.gameObject.activeInHierarchy)
+            if (!soldier.activeSelf)
             {
                 continue;
             }
 
-            Material[] materials = new Material[soldierRenderer.Key.sharedMaterials.Length];
-            Array.Fill(materials, material);
-            soldierRenderer.Key.sharedMaterials = materials;
+            foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>())
+            {
+                if (soldierRenderer.transform.name == "Beer")
+                {
+                    continue;
+                }
+
+                originalSoldierMaterials.Add(soldierRenderer, soldierRenderer.sharedMaterials);
+
+                Material[] materials = new Material[soldierRenderer.sharedMaterials.Length];
+                Array.Fill(materials, material);
+                soldierRenderer.sharedMaterials = materials;
+            }
         }
     }
 
@@ -514,11 +518,16 @@ public class Drink : MonoBehaviour
     {
         foreach (KeyValuePair<Renderer, Material[]> soldierRenderer in originalSoldierMaterials)
         {
-            soldierRenderer.Key.sharedMaterials = soldierRenderer.Value;
+            if (soldierRenderer.Key != null)
+            {
+                soldierRenderer.Key.sharedMaterials = soldierRenderer.Value;
+            }
         }
+
+        originalSoldierMaterials.Clear();
     }
 
-    private void CauseSoldiersLeaving()
+    private void CauseSoldiersLeavingAngry()
     {
         if (Suspition.instance == null)
         {
