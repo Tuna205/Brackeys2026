@@ -16,7 +16,7 @@ MonoBehaviour:
   settings:
     material: {fileID: 2100000, guid: 137d519936d206948bee503da8a55d24, type: 2}
     injectionPoint: 300
-    Steps: 10
+    Steps: 15
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,8 +106,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   m_Settings:
-    AOMethod: 0
-    Downsample: 1
+    AOMethod: 1
+    Downsample: 0
     AfterOpaque: 0
     Source: 1
     NormalSamples: 2
