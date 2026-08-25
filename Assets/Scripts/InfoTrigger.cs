@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class InfoTrigger : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions = null;
-    private float transferAmount = 10f;
+    private float transferAmount = 25f;
     private float transferInterval = 1f;
 
     private InputAction interactAction;

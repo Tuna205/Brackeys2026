@@ -40,7 +40,7 @@ public class Drink : MonoBehaviour
     private const int MinimumSoldiersPerTable = 2;
     private const int MaximumSoldiersPerTable = 4;
 
-    private float suspicionPenalty = 40f;
+    private float suspicionPenalty = 30f;
 
     public DrinkState State { get; private set; }
 
@@ -271,7 +271,7 @@ public class Drink : MonoBehaviour
     private void OnEnterAngry()
     {
         ShowDrinkIndicator(redMaterial);
-        StartStateTimer(AngryDuration, LeaveAndReturnToEmpty);
+        StartStateTimer(AngryDuration, LeaveAngryAndReturnToEmpty);
     }
 
     private void OnExitAngry()
@@ -297,7 +297,7 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         SetActiveBeerScale(Vector3.one * 0.4f);
-        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAndReturnToEmpty);
+        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngryAndReturnToEmpty);
     }
 
     private void OnExitWaitingForDrinksAngry()
@@ -344,9 +344,9 @@ public class Drink : MonoBehaviour
         onFinished();
     }
 
-    private void LeaveAndReturnToEmpty()
+    private void LeaveAngryAndReturnToEmpty()
     {
-        CauseSoldiersLeaving();
+        CauseSoldiersLeavingAngry();
         TransitionTo(DrinkState.Empty);
     }
 
@@ -527,7 +527,7 @@ public class Drink : MonoBehaviour
         originalSoldierMaterials.Clear();
     }
 
-    private void CauseSoldiersLeaving()
+    private void CauseSoldiersLeavingAngry()
     {
         if (Suspition.instance == null)
         {
