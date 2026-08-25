@@ -8,8 +8,6 @@ public class Suspition : MonoBehaviour
     public event Action<float> Changed;
 
     [SerializeField, Range(0f, 100f)] private float value;
-    [SerializeField, Min(0f)] private float decayAmount = 1f;
-    [SerializeField, Min(0.01f)] private float decayInterval = 1f;
 
     public float Value => value;
 
@@ -23,16 +21,6 @@ public class Suspition : MonoBehaviour
         }
 
         instance = this;
-    }
-
-    private void OnEnable()
-    {
-        InvokeRepeating(nameof(Decay), decayInterval, decayInterval);
-    }
-
-    private void OnDisable()
-    {
-        CancelInvoke(nameof(Decay));
     }
 
     private void OnDestroy()
@@ -52,7 +40,6 @@ public class Suspition : MonoBehaviour
         }
 
         value = clampedValue;
-        Debug.LogWarning("Sus value: " + value);
         Changed?.Invoke(value);
     }
 
@@ -61,8 +48,4 @@ public class Suspition : MonoBehaviour
         SetValue(value + amount);
     }
 
-    private void Decay()
-    {
-        Add(-decayAmount);
-    }
 }

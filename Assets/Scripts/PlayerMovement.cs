@@ -1,16 +1,20 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(CharacterController))]
 public sealed class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions;
     private float moveSpeed = 5f;
 
     private InputAction moveAction;
+    private CharacterController characterController;
     private Vector2 moveInput;
 
     private void Awake()
     {
+        characterController = GetComponent<CharacterController>();
+
         moveAction = inputActions.FindAction("Player/Move", true);
 
         if (moveAction == null)
@@ -29,6 +33,8 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
+        moveInput = Vector2.zero;
+
         if (moveAction == null)
         {
             return;
@@ -41,8 +47,8 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y);
-        transform.Translate(direction * (moveSpeed * Time.deltaTime), Space.World);
+        Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        characterController.Move(direction * (moveSpeed * Time.deltaTime));
     }
 
     private void OnMove(InputAction.CallbackContext context)

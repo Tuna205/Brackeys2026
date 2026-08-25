@@ -76,6 +76,18 @@ public class Player : MonoBehaviour
         return true;
     }
 
+    public bool RemoveLastBeer()
+    {
+        if (beers.Count == 0)
+        {
+            return false;
+        }
+
+        beers.RemoveAt(beers.Count - 1);
+        RefreshBeerHolder();
+        return true;
+    }
+
     private void RefreshBeerHolder()
     {
         for (int i = 0; i < beerHolder.childCount; i++)

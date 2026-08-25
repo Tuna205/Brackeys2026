@@ -39,6 +39,8 @@ public class Drink : MonoBehaviour
     private const float DrinkingAndGivingInfoDuration = 30f;
     private const int MinimumSoldiersPerTable = 2;
     private const int MaximumSoldiersPerTable = 4;
+    private static readonly Vector3 SmallBeerScale = Vector3.one * 0.2f;
+    private static readonly Vector3 LargeBeerScale = Vector3.one * 0.4f;
 
     private float suspicionPenalty = 30f;
 
@@ -146,7 +148,7 @@ public class Drink : MonoBehaviour
             drinkIndicator.SetActive(false);
         }
 
-        SetActiveBeerScale(Vector3.one * 0.2f);
+        SetActiveBeerScale(SmallBeerScale);
         DisableAllSoldiers();
     }
 
@@ -296,14 +298,14 @@ public class Drink : MonoBehaviour
     private void OnEnterWaitingForDrinksAngry()
     {
         drinkIndicator.SetActive(false);
-        SetActiveBeerScale(Vector3.one * 0.4f);
+        SetActiveBeerScale(LargeBeerScale);
         StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngryAndReturnToEmpty);
     }
 
     private void OnExitWaitingForDrinksAngry()
     {
         StopStateTimer();
-        SetActiveBeerScale(Vector3.one);
+        SetActiveBeerScale(SmallBeerScale);
     }
 
     private void OnEnterDrinkingAndGivingInfo()
@@ -453,6 +455,7 @@ public class Drink : MonoBehaviour
 
             int beerIndex = UnityEngine.Random.Range(0, beerMaterials.Length);
             beerRenderer.sharedMaterial = beerMaterials[beerIndex];
+            beer.localScale = SmallBeerScale;
             beer.gameObject.SetActive(true);
             requiredBeers.Add(beerTypes[beerIndex]);
         }

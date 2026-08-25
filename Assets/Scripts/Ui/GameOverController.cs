@@ -53,6 +53,16 @@ public class GameOverController : MonoBehaviour
             return;
         }
 
+        TriggerGameOver();
+    }
+
+    public void TriggerGameOver()
+    {
+        if (gameOverTriggered)
+        {
+            return;
+        }
+
         gameOverTriggered = true;
         gameOverUI.SetActive(true);
         Time.timeScale = 0f;

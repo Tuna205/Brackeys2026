@@ -3,13 +3,13 @@ using UnityEngine;
 public class Table : MonoBehaviour
 {
     private float perimeterRadius = 2f;
-    private float suspicionPerInterval = 11f;
-    private float memoryPerInterval = 25f;
-    private float intervalSeconds = 1f;
+    private const float AngrySuspitionPerTick = 2f;
+    private const float DrinkingSuspitionPerTick = -1f;
+    private const float SuspitionTickInterval = 1f;
 
     private Transform player;
     private Drink drink;
-    private float timeInside;
+    private float suspitionTickTime;
 
     public bool IsPlayerInside { get; private set; }
 
@@ -34,7 +34,7 @@ public class Table : MonoBehaviour
         drink = GetComponent<Drink>();
         if (drink == null)
         {
-            Debug.LogError("Table needs a Drink component to control memory gain.", this);
+            Debug.LogError("Table needs a Drink component for Suspition changes.", this);
             enabled = false;
             return;
         }
@@ -47,24 +47,30 @@ public class Table : MonoBehaviour
         Vector3 offset = player.position - transform.position;
         IsPlayerInside = offset.sqrMagnitude <= perimeterRadius * perimeterRadius;
 
-        if (!IsPlayerInside)
+        float suspitionPerTick = GetSuspitionPerTick();
+        if (Mathf.Approximately(suspitionPerTick, 0f))
         {
-            timeInside = 0f;
+            suspitionTickTime = 0f;
             return;
         }
 
-        timeInside += Time.deltaTime;
-        while (timeInside >= intervalSeconds)
+        suspitionTickTime += Time.deltaTime;
+        while (suspitionTickTime >= SuspitionTickInterval)
         {
-            Suspition.instance.Add(suspicionPerInterval);
-
-            if (drink.State == Drink.DrinkState.DrinkingAndGivingInfo)
-            {
-                Memory.instance.Add(memoryPerInterval);
-            }
-
-            timeInside -= intervalSeconds;
+            Suspition.instance.Add(suspitionPerTick);
+            suspitionTickTime -= SuspitionTickInterval;
         }
+    }
+
+    private float GetSuspitionPerTick()
+    {
+        return drink.State switch
+        {
+            Drink.DrinkState.Angry => AngrySuspitionPerTick,
+            Drink.DrinkState.WaitingForDrinksAngry => AngrySuspitionPerTick,
+            Drink.DrinkState.DrinkingAndGivingInfo => DrinkingSuspitionPerTick,
+            _ => 0f
+        };
     }
 
     private void OnDrawGizmosSelected()
