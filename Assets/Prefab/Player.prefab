@@ -347,7 +347,6 @@ GameObject:
   - component: {fileID: 317245193657071917}
   - component: {fileID: 4526185024689366766}
   - component: {fileID: 6294813752406817234}
-  - component: {fileID: 3653049376971823461}
   - component: {fileID: 2622232263812784233}
   m_Layer: 0
   m_Name: Player
@@ -402,35 +401,8 @@ MonoBehaviour:
   whiteBeerMaterial: {fileID: 2100000, guid: 512d7f4075c4d5248b6e4eedc115d526, type: 2}
   redBeerMaterial: {fileID: 2100000, guid: 70b8c4ef4216db2498941c6ddb3f142a, type: 2}
   darkBeerMaterial: {fileID: 2100000, guid: 4d0d878d684d1784e92d506c9b392e05, type: 2}
---- !u!54 &3653049376971823461
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5461666294468134118}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 116
-  m_CollisionDetection: 2
---- !u!136 &2622232263812784233
-CapsuleCollider:
+--- !u!143 &2622232263812784233
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -444,13 +416,15 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
+  serializedVersion: 3
   m_Height: 2
-  m_Direction: 1
+  m_Radius: 0.2
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.02
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &6263513618015675002
 GameObject:

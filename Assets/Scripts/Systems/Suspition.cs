@@ -52,7 +52,6 @@ public class Suspition : MonoBehaviour
         }
 
         value = clampedValue;
-        Debug.LogWarning("Sus value: " + value);
         Changed?.Invoke(value);
     }
 
