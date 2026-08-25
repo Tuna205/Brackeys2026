@@ -2,30 +2,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InfoTrigger : MonoBehaviour
+public class Sink : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions = null;
 
-    private InputAction interactAction;
     private readonly HashSet<Collider> playerCollidersInside = new();
-    private MorseCodeMinigame morseCodeMinigame;
+    private InputAction interactAction;
 
     private bool PlayerInside => playerCollidersInside.Count > 0;
 
     private void Awake()
     {
-        interactAction = inputActions.FindAction("Player/Jump", true).Clone();
-        morseCodeMinigame = FindAnyObjectByType<MorseCodeMinigame>(
-            FindObjectsInactive.Include);
-
-        if (morseCodeMinigame == null)
+        if (inputActions == null)
         {
-            Debug.LogError("Info Trigger could not find the Morse Code Minigame.", this);
+            Debug.LogError("Sink needs an Input Action Asset.", this);
+            enabled = false;
+            return;
         }
+
+        interactAction = inputActions.FindAction("Player/Jump", true).Clone();
     }
 
     private void OnEnable()
     {
+        if (interactAction == null)
+        {
+            return;
+        }
+
         interactAction.performed += OnInteract;
         interactAction.Enable();
     }
@@ -56,33 +60,21 @@ public class InfoTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (playerCollidersInside.Remove(other)
-            && !PlayerInside
-            && morseCodeMinigame != null)
-        {
-            morseCodeMinigame.gameObject.SetActive(false);
-        }
+        playerCollidersInside.Remove(other);
     }
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        if (!PlayerInside)
+        if (PlayerInside && Player.instance != null)
         {
-            return;
+            Player.instance.RemoveLastBeer();
         }
-
-        if (morseCodeMinigame == null)
-        {
-            return;
-        }
-
-        morseCodeMinigame.gameObject.SetActive(true);
     }
 
     private static bool IsPlayerCollider(Collider other)
     {
-        return Player.instance != null &&
-            (other.gameObject == Player.instance.gameObject ||
-             other.transform.IsChildOf(Player.instance.transform));
+        return Player.instance != null
+            && (other.gameObject == Player.instance.gameObject
+                || other.transform.IsChildOf(Player.instance.transform));
     }
 }

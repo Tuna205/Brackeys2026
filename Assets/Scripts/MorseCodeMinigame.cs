@@ -28,6 +28,8 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     private const float MaximumSpawnInterval = 1.8f;
     private const float CorrectScore = 10f;
     private const float IncorrectScore = -5f;
+    private const float SuspitionPerTick = 3f;
+    private const float SuspitionTickInterval = 1f;
 
     [SerializeField] private RectTransform panelRectTransform = null;
     [SerializeField] private RectTransform symbolContainer = null;
@@ -41,7 +43,10 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     private Sprite symbolSprite;
     private Texture2D symbolTexture;
     private float spawnTimer;
+    private float suspitionTickTimer;
     private bool missingInfoWasReported;
+    private bool missingSuspitionWasReported;
+    private bool ignoreSpaceUntilReleased;
 
     private void Awake()
     {
@@ -63,11 +68,25 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
+
+        if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         bool spaceIsHeld = keyboard != null && keyboard.spaceKey.isPressed;
+
+        if (ignoreSpaceUntilReleased && !spaceIsHeld)
+        {
+            ignoreSpaceUntilReleased = false;
+        }
 
         MoveSymbols(spaceIsHeld);
 
-        if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+        if (!ignoreSpaceUntilReleased
+            && keyboard != null
+            && keyboard.spaceKey.wasPressedThisFrame)
         {
             HandleSpacePressed();
         }
@@ -78,6 +97,19 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             SpawnSymbol();
             spawnTimer = Random.Range(MinimumSpawnInterval, MaximumSpawnInterval);
         }
+
+        suspitionTickTimer -= Time.deltaTime;
+        while (suspitionTickTimer <= 0f)
+        {
+            AddSuspition(SuspitionPerTick);
+            suspitionTickTimer += SuspitionTickInterval;
+        }
+    }
+
+    private void OnEnable()
+    {
+        ignoreSpaceUntilReleased = true;
+        suspitionTickTimer = SuspitionTickInterval;
     }
 
     private void OnDestroy()
@@ -162,6 +194,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             float symbolHalfWidth = symbol.RectTransform.rect.width * 0.5f;
             if (symbol.RectTransform.anchoredPosition.x + symbolHalfWidth < 0f)
             {
+                AddInfo(IncorrectScore);
                 RemoveSymbolAt(i);
             }
         }
@@ -250,6 +283,21 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         {
             Debug.LogError("Morse Code Minigame could not find the Info system.", this);
             missingInfoWasReported = true;
+        }
+    }
+
+    private void AddSuspition(float amount)
+    {
+        if (Suspition.instance != null)
+        {
+            Suspition.instance.Add(amount);
+            return;
+        }
+
+        if (!missingSuspitionWasReported)
+        {
+            Debug.LogError("Morse Code Minigame could not find the Suspition system.", this);
+            missingSuspitionWasReported = true;
         }
     }
 
