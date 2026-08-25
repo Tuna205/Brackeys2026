@@ -113,8 +113,8 @@ Shader "CustomPass/S_QuantizeColor"
                 half luminance = dot(color.rgb, half3(0.299, 0.587, 0.114));
                 half3 normalizedColor = color.rgb / max(luminance, 0.001);
                 // Quantize luminance and color separately
-                half quantizedLum = QuantizeAA(luminance, _Steps);
-                quantizedLum = lerp(0.1, 0.8, quantizedLum);
+                half quantizedLum = QuantizeAA(luminance, _Steps*5);
+                //quantizedLum = lerp(0.02, 1, quantizedLum);
                 half3 quantizedColor;
                 quantizedColor.r = QuantizeAA(normalizedColor.r, _Steps);
                 quantizedColor.g = QuantizeAA(normalizedColor.g, _Steps);

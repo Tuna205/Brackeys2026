@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WoodPlanks
-  m_Shader: {fileID: -6465566751694194690, guid: b4b589b9fd3d2be42b396d98c88a990a, type: 3}
+  m_Name: BrickWall
+  m_Shader: {fileID: -6465566751694194690, guid: e0ed3e9a1f25c8f418dd21a7e5458733, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -58,7 +58,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Diffuse:
-        m_Texture: {fileID: 2800000, guid: c79e0e2c86be4e44eae24708ce47d980, type: 3}
+        m_Texture: {fileID: 2800000, guid: 330c7a7fd5988fb41b79631872b977d1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DiffuseMap:
@@ -70,7 +70,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b5488e4ffba2b9e4eb9b2c344c709863, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -82,7 +82,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: 739846d2e05d747468b9df6dbeb0f6e1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 63b954dfd23f3354eb1fa36493d51a33, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -93,8 +93,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_07625442c4c04f1aae9f3ca39bceb90e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 15e6f58395da67846a4f45f26b826c9e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_87772eaba5c646afb148b724135538bb_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 15e6f58395da67846a4f45f26b826c9e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_8a221b88b42e4200a4ef5289c7f521f9_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 41d7aa346dc550248b9d1f4da4191274, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_d0c689dea0b24644b9a4210351ee88a9_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 15e6f58395da67846a4f45f26b826c9e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -129,16 +141,16 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _Enable_POM: 0
+    - _Enable_POM: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossinessSource: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NormalStrength: 0
+    - _NormalStrength: 1
     - _OcclusionStrength: 1
-    - _POM_Amplitude: 6
+    - _POM_Amplitude: 3
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -160,8 +172,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _TilingAndOffset: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint: {r: 0.4433962, g: 0.42875576, b: 0.42875576, a: 1}
+    - _TilingAndOffset: {r: 10, g: 10, b: 0, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

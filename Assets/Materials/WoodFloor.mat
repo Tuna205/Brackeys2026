@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WoodPlanks
+  m_Name: WoodFloor
   m_Shader: {fileID: -6465566751694194690, guid: b4b589b9fd3d2be42b396d98c88a990a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -93,10 +93,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_8a221b88b42e4200a4ef5289c7f521f9_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 41d7aa346dc550248b9d1f4da4191274, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -138,7 +134,7 @@ Material:
     - _Metallic: 0
     - _NormalStrength: 0
     - _OcclusionStrength: 1
-    - _POM_Amplitude: 6
+    - _POM_Amplitude: 3
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -160,7 +156,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _TilingAndOffset: {r: 1, g: 1, b: 0, a: 0}
+    - _TilingAndOffset: {r: 5, g: 5, b: 0, a: 0}
     - _Tint: {r: 0.4433962, g: 0.42875576, b: 0.42875576, a: 1}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
