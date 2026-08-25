@@ -108,14 +108,6 @@ public class Drink : MonoBehaviour
         {
             GameObject soldier = soldierList.GetChild(i).gameObject;
             soldiers.Add(soldier);
-
-            foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>(true))
-            {
-                if (soldierRenderer.transform.name != "Beer")
-                {
-                    originalSoldierMaterials.Add(soldierRenderer, soldierRenderer.sharedMaterials);
-                }
-            }
         }
 
         TransitionTo(DrinkState.Empty);
@@ -497,16 +489,28 @@ public class Drink : MonoBehaviour
 
     private void SetActiveSoldierMaterials(Material material)
     {
-        foreach (KeyValuePair<Renderer, Material[]> soldierRenderer in originalSoldierMaterials)
+        originalSoldierMaterials.Clear();
+
+        foreach (GameObject soldier in soldiers)
         {
-            if (!soldierRenderer.Key.gameObject.activeInHierarchy)
+            if (!soldier.activeSelf)
             {
                 continue;
             }
 
-            Material[] materials = new Material[soldierRenderer.Key.sharedMaterials.Length];
-            Array.Fill(materials, material);
-            soldierRenderer.Key.sharedMaterials = materials;
+            foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>())
+            {
+                if (soldierRenderer.transform.name == "Beer")
+                {
+                    continue;
+                }
+
+                originalSoldierMaterials.Add(soldierRenderer, soldierRenderer.sharedMaterials);
+
+                Material[] materials = new Material[soldierRenderer.sharedMaterials.Length];
+                Array.Fill(materials, material);
+                soldierRenderer.sharedMaterials = materials;
+            }
         }
     }
 
@@ -514,8 +518,13 @@ public class Drink : MonoBehaviour
     {
         foreach (KeyValuePair<Renderer, Material[]> soldierRenderer in originalSoldierMaterials)
         {
-            soldierRenderer.Key.sharedMaterials = soldierRenderer.Value;
+            if (soldierRenderer.Key != null)
+            {
+                soldierRenderer.Key.sharedMaterials = soldierRenderer.Value;
+            }
         }
+
+        originalSoldierMaterials.Clear();
     }
 
     private void CauseSoldiersLeaving()
