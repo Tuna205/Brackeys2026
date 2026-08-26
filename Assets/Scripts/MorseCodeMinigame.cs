@@ -16,16 +16,16 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     {
         public RectTransform RectTransform;
         public MorseSymbolType Type;
-        public Image DashFillImage;
+        public RectTransform DashFillTransform;
         public bool DashHoldActive;
         public float DashHoldProgress;
     }
 
     private const float SymbolY = 80f;
     private const float DashWidth = 100f;
-    private const float SymbolSpeed = 350f;
-    private const float MinimumSpawnInterval = 1.1f;
-    private const float MaximumSpawnInterval = 1.8f;
+    private const float SymbolSpeed = 300f;
+    private const float MinimumSpawnInterval = 0.4f;
+    private const float MaximumSpawnInterval = 0.8f;
     private const float CorrectScore = 10f;
     private const float IncorrectScore = -5f;
     private const float SuspitionPerTick = 10f;
@@ -36,7 +36,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     [SerializeField] private RectTransform inputZone = null;
     [SerializeField] private RectTransform dotPrefab = null;
     [SerializeField] private RectTransform dashPrefab = null;
-    [SerializeField, Min(0.1f)] private float dashHoldDuration = 0.3f;
+    [SerializeField, Min(0.1f)] private float dashHoldDuration = 0.2f;
 
     private readonly List<ActiveSymbol> activeSymbols = new();
 
@@ -82,14 +82,14 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             ignoreSpaceUntilReleased = false;
         }
 
-        MoveSymbols(spaceIsHeld);
-
         if (!ignoreSpaceUntilReleased
             && keyboard != null
             && keyboard.spaceKey.wasPressedThisFrame)
         {
             HandleSpacePressed();
         }
+
+        MoveSymbols(spaceIsHeld);
 
         spawnTimer -= Time.deltaTime;
         if (spawnTimer <= 0f)
@@ -164,21 +164,23 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             positionX,
             SymbolY);
 
-        Image symbolImage = symbolRect.GetComponent<Image>();
-        symbolImage.sprite = symbolSprite;
+        if (type == MorseSymbolType.Dot)
+        {
+            symbolRect.GetComponent<Image>().sprite = symbolSprite;
+        }
 
-        Image dashFillImage = null;
+        RectTransform dashFillTransform = null;
         if (type == MorseSymbolType.Dash)
         {
-            dashFillImage = symbolRect.GetChild(0).GetComponent<Image>();
-            dashFillImage.sprite = symbolSprite;
+            dashFillTransform = (RectTransform)symbolRect.GetChild(0);
+            SetDashFillScale(dashFillTransform, 0f);
         }
 
         activeSymbols.Add(new ActiveSymbol
         {
             RectTransform = symbolRect,
             Type = type,
-            DashFillImage = dashFillImage
+            DashFillTransform = dashFillTransform
         });
     }
 
@@ -190,13 +192,11 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             symbol.RectTransform.anchoredPosition += Vector2.left
                 * (SymbolSpeed * Time.deltaTime);
 
-            bool isInsideTarget = IsInsideTarget(symbol);
-
             if (symbol.Type == MorseSymbolType.Dash)
             {
                 if (symbol.DashHoldActive)
                 {
-                    if (!spaceIsHeld || !isInsideTarget)
+                    if (!spaceIsHeld)
                     {
                         ResetDashHold(symbol);
                     }
@@ -204,7 +204,9 @@ public sealed class MorseCodeMinigame : MonoBehaviour
                     {
                         symbol.DashHoldProgress += Time.deltaTime
                             / Mathf.Max(0.1f, dashHoldDuration);
-                        symbol.DashFillImage.fillAmount = symbol.DashHoldProgress;
+                        SetDashFillScale(
+                            symbol.DashFillTransform,
+                            symbol.DashHoldProgress);
 
                         if (symbol.DashHoldProgress >= 1f)
                         {
@@ -250,10 +252,17 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         symbol.DashHoldActive = false;
         symbol.DashHoldProgress = 0f;
 
-        if (symbol.DashFillImage != null)
+        if (symbol.DashFillTransform != null)
         {
-            symbol.DashFillImage.fillAmount = 0f;
+            SetDashFillScale(symbol.DashFillTransform, 0f);
         }
+    }
+
+    private static void SetDashFillScale(RectTransform fillTransform, float progress)
+    {
+        Vector3 scale = fillTransform.localScale;
+        scale.x = Mathf.Clamp01(progress);
+        fillTransform.localScale = scale;
     }
 
     private int FindSymbolInsideTarget(MorseSymbolType type)

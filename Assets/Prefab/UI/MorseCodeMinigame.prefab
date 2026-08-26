@@ -82,7 +82,7 @@ MonoBehaviour:
   inputZone: {fileID: 5000000000000000002}
   dotPrefab: {fileID: 1000000000000000002, guid: f23154bbf83f40bab72f75618d563ec1, type: 3}
   dashPrefab: {fileID: 1000000000000000002, guid: 7b23a87c1da946b581a526e22aca902d, type: 3}
-  dashHoldDuration: 0.3
+  dashHoldDuration: 0.2
 --- !u!1 &2000000000000000001
 GameObject:
   m_ObjectHideFlags: 0
