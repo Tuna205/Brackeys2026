@@ -22,6 +22,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     }
 
     private const float SymbolY = 80f;
+    private const float DashWidth = 100f;
     private const float SymbolSpeed = 260f;
     private const float MinimumSpawnInterval = 1.1f;
     private const float MaximumSpawnInterval = 1.8f;
@@ -109,6 +110,11 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     {
         ignoreSpaceUntilReleased = true;
         suspitionTickTimer = SuspitionTickInterval;
+
+        if (activeSymbols.Count == 0)
+        {
+            SpawnOpeningSymbols();
+        }
     }
 
     private void OnDestroy()
@@ -126,6 +132,26 @@ public sealed class MorseCodeMinigame : MonoBehaviour
 
     private void SpawnSymbol()
     {
+        SpawnSymbol(panelRectTransform.rect.width + DashWidth);
+    }
+
+    private void SpawnOpeningSymbols()
+    {
+        float nextSymbolX = panelRectTransform.rect.width + DashWidth;
+        float halfwayX = panelRectTransform.rect.width * 0.5f;
+
+        while (nextSymbolX >= halfwayX)
+        {
+            SpawnSymbol(nextSymbolX);
+            float interval = Random.Range(MinimumSpawnInterval, MaximumSpawnInterval);
+            nextSymbolX -= SymbolSpeed * interval;
+        }
+
+        spawnTimer = Random.Range(MinimumSpawnInterval, MaximumSpawnInterval);
+    }
+
+    private void SpawnSymbol(float positionX)
+    {
         MorseSymbolType type = Random.value < 0.6f
             ? MorseSymbolType.Dot
             : MorseSymbolType.Dash;
@@ -135,7 +161,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             symbolContainer);
         symbolRect.name = type == MorseSymbolType.Dot ? "Morse Dot" : "Morse Dash";
         symbolRect.anchoredPosition = new Vector2(
-            panelRectTransform.rect.width * 0.5f,
+            positionX,
             SymbolY);
 
         Image symbolImage = symbolRect.GetComponent<Image>();
