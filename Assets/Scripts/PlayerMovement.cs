@@ -4,16 +4,26 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public sealed class PlayerMovement : MonoBehaviour
 {
+    private static readonly int WalkingParameter = Animator.StringToHash("walking");
+
     [SerializeField] private InputActionAsset inputActions;
-    private float moveSpeed = 5f;
+    private float moveSpeed = 6f;
+    private float rotationSpeed = 720f;
 
     private InputAction moveAction;
     private CharacterController characterController;
+    private Animator animator;
     private Vector2 moveInput;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>(true);
+
+        if (animator == null)
+        {
+            Debug.LogWarning("PlayerMovement could not find a child Animator.", this);
+        }
 
         moveAction = inputActions.FindAction("Player/Move", true);
 
@@ -34,6 +44,7 @@ public sealed class PlayerMovement : MonoBehaviour
     private void OnDisable()
     {
         moveInput = Vector2.zero;
+        animator?.SetBool(WalkingParameter, false);
 
         if (moveAction == null)
         {
@@ -49,6 +60,16 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
         characterController.Move(direction * (moveSpeed * Time.deltaTime));
+        animator?.SetBool(WalkingParameter, moveInput.sqrMagnitude > 0.01f);
+
+        if (animator != null && direction.sqrMagnitude > 0f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            animator.transform.rotation = Quaternion.RotateTowards(
+                animator.transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime);
+        }
     }
 
     private void OnMove(InputAction.CallbackContext context)

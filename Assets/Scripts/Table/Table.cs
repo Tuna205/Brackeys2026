@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Table : MonoBehaviour
@@ -10,8 +11,23 @@ public class Table : MonoBehaviour
     private Transform player;
     private Drink drink;
     private float suspitionTickTime;
+    private readonly List<Soldier> arrivedSoldiers = new();
 
     public bool IsPlayerInside { get; private set; }
+    public IReadOnlyList<Soldier> ArrivedSoldiers => arrivedSoldiers;
+
+    public void RegisterArrivedSoldier(Soldier soldier)
+    {
+        if (soldier != null && !arrivedSoldiers.Contains(soldier))
+        {
+            arrivedSoldiers.Add(soldier);
+        }
+    }
+
+    public void ClearArrivedSoldiers()
+    {
+        arrivedSoldiers.Clear();
+    }
 
     private void Start()
     {
