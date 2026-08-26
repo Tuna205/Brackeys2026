@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1404974808863215678}
   - component: {fileID: 6498276397956993381}
+  - component: {fileID: 4696509243943672330}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Untagged
@@ -161,3 +162,15 @@ MonoBehaviour:
   soldierModel02: {fileID: 919132149155446097, guid: a2a06789fdb93304b9ddd523517452fd, type: 3}
   officerModel03: {fileID: 919132149155446097, guid: 408f865d8f0622948b98b355a694bfff, type: 3}
   officerModel04: {fileID: 919132149155446097, guid: 3ba9210fbff18654a813e010f630eb4d, type: 3}
+--- !u!114 &4696509243943672330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6332446579320201859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9795d19c91882cf41b36f456c632c629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoldierMovement
