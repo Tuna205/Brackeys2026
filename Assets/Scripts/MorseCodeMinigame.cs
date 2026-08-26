@@ -36,6 +36,9 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     [SerializeField] private RectTransform inputZone = null;
     [SerializeField] private RectTransform dotPrefab = null;
     [SerializeField] private RectTransform dashPrefab = null;
+    [SerializeField] private Image transmitterImage = null;
+    [SerializeField] private Sprite transmitterOpenSprite = null;
+    [SerializeField] private Sprite transmitterClosedSprite = null;
     [SerializeField, Min(0.1f)] private float dashHoldDuration = 0.2f;
 
     private readonly List<ActiveSymbol> activeSymbols = new();
@@ -54,7 +57,10 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             || symbolContainer == null
             || inputZone == null
             || dotPrefab == null
-            || dashPrefab == null)
+            || dashPrefab == null
+            || transmitterImage == null
+            || transmitterOpenSprite == null
+            || transmitterClosedSprite == null)
         {
             Debug.LogError("Morse Code Minigame is missing its scene UI references.", this);
             enabled = false;
@@ -76,6 +82,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         }
 
         bool spaceIsHeld = keyboard != null && keyboard.spaceKey.isPressed;
+        SetTransmitterSprite(spaceIsHeld);
 
         if (ignoreSpaceUntilReleased && !spaceIsHeld)
         {
@@ -110,6 +117,8 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     {
         ignoreSpaceUntilReleased = true;
         suspitionTickTimer = SuspitionTickInterval;
+        SetTransmitterSprite(
+            Keyboard.current != null && Keyboard.current.spaceKey.isPressed);
 
         if (activeSymbols.Count == 0)
         {
@@ -263,6 +272,13 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         Vector3 scale = fillTransform.localScale;
         scale.x = Mathf.Clamp01(progress);
         fillTransform.localScale = scale;
+    }
+
+    private void SetTransmitterSprite(bool spaceIsHeld)
+    {
+        transmitterImage.sprite = spaceIsHeld
+            ? transmitterClosedSprite
+            : transmitterOpenSprite;
     }
 
     private int FindSymbolInsideTarget(MorseSymbolType type)
