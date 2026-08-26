@@ -77,7 +77,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1977069529154518828}
-  - component: {fileID: 8870774444464103979}
   m_Layer: 0
   m_Name: SoldierSpawn
   m_TagString: Untagged
@@ -100,31 +99,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4752129372729090607}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8870774444464103979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8602210156734352949}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshLink
-  m_SerializedVersion: 1
-  m_AgentTypeID: 0
-  m_StartPoint: {x: 0, y: 0, z: -3.0128098}
-  m_EndPoint: {x: -0.00000064074993, y: 0, z: -0.6850672}
-  m_StartTransform: {fileID: 0}
-  m_EndTransform: {fileID: 0}
-  m_Activated: 1
-  m_Width: 0
-  m_CostModifier: 1
-  m_IsOverridingCost: 0
-  m_Bidirectional: 1
-  m_AutoUpdatePosition: 0
-  m_Area: 0
 --- !u!1001 &3455348189266006424
 PrefabInstance:
   m_ObjectHideFlags: 0
