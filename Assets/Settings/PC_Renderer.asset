@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     material: {fileID: 2100000, guid: 6395176a15284e9469fc38f7c833ac49, type: 2}
-    NormalThreshold: 0.75
+    NormalThreshold: 0.537
     DepthThreshold: 0.1
     InjectionPoint: 300
 --- !u!114 &7833122117494664109
