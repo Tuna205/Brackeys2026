@@ -150,7 +150,7 @@ Material:
     - _Metallic: 0
     - _NormalStrength: 1
     - _OcclusionStrength: 1
-    - _POM_Amplitude: 3
+    - _POM_Amplitude: 4
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
