@@ -36,7 +36,6 @@ public class Drink : MonoBehaviour
     private const float MinimumRequestDelay = 0f;
     private const float MaximumRequestDelay = 10f;
     private const float SoldierSpawnInterval = 1f;
-    private const float SoldierSpawnY = 0f;
     private const float PatientDuration = 15f;
     private const float AngryDuration = 30f;
     private const float WaitingForDrinksDuration = 30f;
@@ -60,6 +59,7 @@ public class Drink : MonoBehaviour
     private readonly Dictionary<Renderer, Material[]> originalSoldierMaterials = new();
     private Player player;
     private Transform door;
+    private Transform soldierSpawn;
     private Coroutine soldierArrivalRoutine;
     private int expectedSoldierCount;
     private int expectedLeavingSoldierCount;
@@ -163,15 +163,23 @@ public class Drink : MonoBehaviour
         }
 
         player = Player.instance;
-        GameObject doorObject = GameObject.Find("Door");
-        if (doorObject == null)
+        Door doorComponent = FindAnyObjectByType<Door>();
+        if (doorComponent == null)
         {
             Debug.LogError("Drink could not find the Door object.", this);
             enabled = false;
             return;
         }
 
-        door = doorObject.transform;
+        door = doorComponent.transform;
+        soldierSpawn = door.Find("SoldierSpawn");
+        if (soldierSpawn == null)
+        {
+            Debug.LogError("The Door needs a child named SoldierSpawn.", doorComponent);
+            enabled = false;
+            return;
+        }
+
         stateMachineIsRunning = true;
         TransitionTo(DrinkState.Empty);
     }
@@ -516,13 +524,12 @@ public class Drink : MonoBehaviour
     {
         for (int i = 0; i < expectedSoldierCount; i++)
         {
-            Vector3 spawnPosition = door.position;
-            spawnPosition.y = SoldierSpawnY;
+            Vector3 spawnPosition = soldierSpawn.position;
 
             Soldier soldier = Instantiate(
                 soldierPrefab,
                 spawnPosition,
-                door.rotation);
+                soldierSpawn.rotation);
             spawnedSoldiers.Add(soldier);
 
             SoldierMovement movement = soldier.GetComponent<SoldierMovement>();
