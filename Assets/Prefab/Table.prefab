@@ -67,6 +67,7 @@ MonoBehaviour:
   yellowMaterial: {fileID: 2100000, guid: 512d7f4075c4d5248b6e4eedc115d526, type: 2}
   redMaterial: {fileID: 2100000, guid: 70b8c4ef4216db2498941c6ddb3f142a, type: 2}
   soldierList: {fileID: 5835014519109288855}
+  soldierPrefab: {fileID: 6498276397956993381, guid: f5a3fd63f714c6f4d8efd7ceb4c7b1b5, type: 3}
   blackMaterial: {fileID: 2100000, guid: 4d0d878d684d1784e92d506c9b392e05, type: 2}
 --- !u!1 &736949824041118113
 GameObject:

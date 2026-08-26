@@ -29,11 +29,13 @@ public class Drink : MonoBehaviour
 
     [Header("Soldiers")]
     [SerializeField] private Transform soldierList = null;
+    [SerializeField] private Soldier soldierPrefab = null;
     [SerializeField] private Material blackMaterial = null;
 
     private const float MinimumRequestDelay = 0f;
     private const float MaximumRequestDelay = 10f;
-    private const float SoldiersArrivingDuration = 3f;
+    private const float SoldierSpawnInterval = 1f;
+    private const float SoldierSpawnY = -1.55f;
     private const float PatientDuration = 15f;
     private const float AngryDuration = 30f;
     private const float WaitingForDrinksDuration = 30f;
@@ -51,10 +53,14 @@ public class Drink : MonoBehaviour
     private Table table;
     private InputAction interactAction;
     private Coroutine stateTimer;
-    private readonly List<GameObject> soldiers = new();
+    private readonly List<Transform> soldierPositions = new();
+    private readonly List<Soldier> spawnedSoldiers = new();
     private readonly List<Player.BeerTypes> requiredBeers = new();
     private readonly Dictionary<Renderer, Material[]> originalSoldierMaterials = new();
     private Player player;
+    private Transform door;
+    private Coroutine soldierArrivalRoutine;
+    private int expectedSoldierCount;
     private bool hasEnteredState;
     private bool stateMachineIsRunning;
 
@@ -108,10 +114,31 @@ public class Drink : MonoBehaviour
             soldierList = transform.Find("SoldierList");
         }
 
+        if (soldierList == null || soldierPrefab == null)
+        {
+            Debug.LogError("Drink needs a SoldierList and Soldier prefab.", this);
+            enabled = false;
+            return;
+        }
+
         for (int i = 0; i < soldierList.childCount; i++)
         {
-            GameObject soldier = soldierList.GetChild(i).gameObject;
-            soldiers.Add(soldier);
+            Transform child = soldierList.GetChild(i);
+            if (child.name.StartsWith("SoldierPosition", StringComparison.Ordinal))
+            {
+                soldierPositions.Add(child);
+            }
+            else if (child.TryGetComponent(out Soldier legacySoldier))
+            {
+                legacySoldier.gameObject.SetActive(false);
+            }
+        }
+
+        if (soldierPositions.Count == 0)
+        {
+            Debug.LogError("Drink needs SoldierPosition children inside SoldierList.", this);
+            enabled = false;
+            return;
         }
 
         TransitionTo(DrinkState.Empty);
@@ -133,6 +160,15 @@ public class Drink : MonoBehaviour
         }
 
         player = Player.instance;
+        GameObject doorObject = GameObject.Find("Door");
+        if (doorObject == null)
+        {
+            Debug.LogError("Drink could not find the Door object.", this);
+            enabled = false;
+            return;
+        }
+
+        door = doorObject.transform;
         stateMachineIsRunning = true;
         TransitionTo(DrinkState.Empty);
     }
@@ -151,7 +187,7 @@ public class Drink : MonoBehaviour
         }
 
         SetActiveBeerScale(SmallBeerScale);
-        DisableAllSoldiers();
+        RemoveAllSoldiers();
     }
 
     private void OnDestroy()
@@ -252,7 +288,7 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         requiredBeers.Clear();
-        DisableAllSoldiers();
+        RemoveAllSoldiers();
 
         if (stateMachineIsRunning)
         {
@@ -269,15 +305,12 @@ public class Drink : MonoBehaviour
     private void OnEnterSoldiersArriving()
     {
         drinkIndicator.SetActive(false);
-        EnableRandomSoldiers();
-        StartStateTimer(
-            SoldiersArrivingDuration,
-            () => TransitionTo(DrinkState.Patient));
+        StartSoldierArrivals();
     }
 
     private void OnExitSoldiersArriving()
     {
-        StopStateTimer();
+        StopSoldierArrivals();
     }
 
     private void OnEnterPatient()
@@ -416,36 +449,97 @@ public class Drink : MonoBehaviour
         TransitionTo(DrinkState.DrinkingAndGivingInfo);
     }
 
-    private void EnableRandomSoldiers()
+    private void StartSoldierArrivals()
     {
-        DisableAllSoldiers();
+        StopSoldierArrivals();
+        RemoveAllSoldiers();
 
-        int maximumSoldiers = Mathf.Min(MaximumSoldiersPerTable, soldiers.Count);
+        int maximumSoldiers = Mathf.Min(MaximumSoldiersPerTable, soldierPositions.Count);
         int minimumSoldiers = Mathf.Min(MinimumSoldiersPerTable, maximumSoldiers);
-        int soldiersToEnable = UnityEngine.Random.Range(minimumSoldiers, maximumSoldiers + 1);
+        expectedSoldierCount = UnityEngine.Random.Range(minimumSoldiers, maximumSoldiers + 1);
 
-        List<GameObject> availableSoldiers = new(soldiers);
-        for (int i = 0; i < soldiersToEnable; i++)
+        List<Transform> availablePositions = new(soldierPositions);
+        for (int i = 0; i < expectedSoldierCount; i++)
         {
-            int selectedIndex = UnityEngine.Random.Range(i, availableSoldiers.Count);
-            (availableSoldiers[i], availableSoldiers[selectedIndex]) =
-                (availableSoldiers[selectedIndex], availableSoldiers[i]);
-            availableSoldiers[i].SetActive(true);
+            int selectedIndex = UnityEngine.Random.Range(i, availablePositions.Count);
+            (availablePositions[i], availablePositions[selectedIndex]) =
+                (availablePositions[selectedIndex], availablePositions[i]);
+        }
+
+        soldierArrivalRoutine = StartCoroutine(SpawnSoldiers(availablePositions));
+    }
+
+    private IEnumerator SpawnSoldiers(List<Transform> destinations)
+    {
+        for (int i = 0; i < expectedSoldierCount; i++)
+        {
+            Vector3 spawnPosition = door.position;
+            spawnPosition.y = SoldierSpawnY;
+
+            Soldier soldier = Instantiate(
+                soldierPrefab,
+                spawnPosition,
+                door.rotation);
+            spawnedSoldiers.Add(soldier);
+
+            SoldierMovement movement = soldier.GetComponent<SoldierMovement>();
+            if (movement == null
+                || !movement.MoveFromTo(spawnPosition, destinations[i], OnSoldierArrived))
+            {
+                Debug.LogError("Spawned Soldier could not start moving to its table.", soldier);
+                yield break;
+            }
+
+            if (i < expectedSoldierCount - 1)
+            {
+                yield return new WaitForSeconds(SoldierSpawnInterval);
+            }
+        }
+
+        soldierArrivalRoutine = null;
+    }
+
+    private void OnSoldierArrived(SoldierMovement movement)
+    {
+        if (State != DrinkState.SoldiersArriving
+            || !movement.TryGetComponent(out Soldier soldier))
+        {
+            return;
+        }
+
+        soldier.transform.SetParent(soldierList, true);
+        table.RegisterArrivedSoldier(soldier);
+
+        if (table.ArrivedSoldiers.Count == expectedSoldierCount)
+        {
+            TransitionTo(DrinkState.Patient);
         }
     }
 
-    private void DisableAllSoldiers()
+    private void StopSoldierArrivals()
     {
-        foreach (GameObject soldier in soldiers)
+        if (soldierArrivalRoutine != null)
         {
-            Transform beer = soldier.transform.Find("Beer");
-            if (beer != null)
-            {
-                beer.gameObject.SetActive(false);
-            }
-
-            soldier.SetActive(false);
+            StopCoroutine(soldierArrivalRoutine);
+            soldierArrivalRoutine = null;
         }
+    }
+
+    private void RemoveAllSoldiers()
+    {
+        StopSoldierArrivals();
+        table?.ClearArrivedSoldiers();
+
+        foreach (Soldier soldier in spawnedSoldiers)
+        {
+            if (soldier != null)
+            {
+                Destroy(soldier.gameObject);
+            }
+        }
+
+        spawnedSoldiers.Clear();
+        expectedSoldierCount = 0;
     }
 
     private void EnableBeersForActiveSoldiers()
@@ -460,13 +554,8 @@ public class Drink : MonoBehaviour
 
         requiredBeers.Clear();
 
-        foreach (GameObject soldier in soldiers)
+        foreach (Soldier soldier in table.ArrivedSoldiers)
         {
-            if (!soldier.activeSelf)
-            {
-                continue;
-            }
-
             Transform beer = soldier.transform.Find("Beer");
             if (beer == null || !beer.TryGetComponent(out Renderer beerRenderer))
             {
@@ -484,7 +573,7 @@ public class Drink : MonoBehaviour
 
     private void DisableAllBeers()
     {
-        foreach (GameObject soldier in soldiers)
+        foreach (Soldier soldier in table.ArrivedSoldiers)
         {
             Transform beer = soldier.transform.Find("Beer");
             if (beer != null)
@@ -496,13 +585,8 @@ public class Drink : MonoBehaviour
 
     private void SetActiveBeerScale(Vector3 scale)
     {
-        foreach (GameObject soldier in soldiers)
+        foreach (Soldier soldier in table.ArrivedSoldiers)
         {
-            if (!soldier.activeSelf)
-            {
-                continue;
-            }
-
             Transform beer = soldier.transform.Find("Beer");
             if (beer != null)
             {
@@ -515,13 +599,8 @@ public class Drink : MonoBehaviour
     {
         originalSoldierMaterials.Clear();
 
-        foreach (GameObject soldier in soldiers)
+        foreach (Soldier soldier in table.ArrivedSoldiers)
         {
-            if (!soldier.activeSelf)
-            {
-                continue;
-            }
-
             foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>())
             {
                 if (soldierRenderer.transform.name == "Beer")
