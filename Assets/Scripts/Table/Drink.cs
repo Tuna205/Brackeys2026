@@ -9,6 +9,7 @@ public class Drink : MonoBehaviour
     public enum DrinkState
     {
         Empty,
+        SoldiersArriving,
         Patient,
         Angry,
         WaitingForDrinks,
@@ -32,6 +33,7 @@ public class Drink : MonoBehaviour
 
     private const float MinimumRequestDelay = 0f;
     private const float MaximumRequestDelay = 10f;
+    private const float SoldiersArrivingDuration = 3f;
     private const float PatientDuration = 15f;
     private const float AngryDuration = 30f;
     private const float WaitingForDrinksDuration = 30f;
@@ -197,6 +199,9 @@ public class Drink : MonoBehaviour
             case DrinkState.Empty:
                 OnEnterEmpty();
                 break;
+            case DrinkState.SoldiersArriving:
+                OnEnterSoldiersArriving();
+                break;
             case DrinkState.Patient:
                 OnEnterPatient();
                 break;
@@ -221,6 +226,9 @@ public class Drink : MonoBehaviour
         {
             case DrinkState.Empty:
                 OnExitEmpty();
+                break;
+            case DrinkState.SoldiersArriving:
+                OnExitSoldiersArriving();
                 break;
             case DrinkState.Patient:
                 OnExitPatient();
@@ -249,7 +257,7 @@ public class Drink : MonoBehaviour
         if (stateMachineIsRunning)
         {
             float requestDelay = UnityEngine.Random.Range(MinimumRequestDelay, MaximumRequestDelay);
-            StartStateTimer(requestDelay, () => TransitionTo(DrinkState.Patient));
+            StartStateTimer(requestDelay, () => TransitionTo(DrinkState.SoldiersArriving));
         }
     }
 
@@ -258,10 +266,23 @@ public class Drink : MonoBehaviour
         StopStateTimer();
     }
 
+    private void OnEnterSoldiersArriving()
+    {
+        drinkIndicator.SetActive(false);
+        EnableRandomSoldiers();
+        StartStateTimer(
+            SoldiersArrivingDuration,
+            () => TransitionTo(DrinkState.Patient));
+    }
+
+    private void OnExitSoldiersArriving()
+    {
+        StopStateTimer();
+    }
+
     private void OnEnterPatient()
     {
         ShowDrinkIndicator(greenMaterial);
-        EnableRandomSoldiers();
         StartStateTimer(PatientDuration, () => TransitionTo(DrinkState.Angry));
     }
 
