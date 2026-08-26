@@ -296,7 +296,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 98a5c633b9e17ee4db95984581921463, type: 2}
     - target: {fileID: 5866666021909216657, guid: 552961a02b5a1964982482a5f016826b, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -374,7 +374,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 98a5c633b9e17ee4db95984581921463, type: 2}
     - target: {fileID: 5866666021909216657, guid: a2a06789fdb93304b9ddd523517452fd, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -473,7 +473,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 98a5c633b9e17ee4db95984581921463, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -548,7 +548,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 98a5c633b9e17ee4db95984581921463, type: 2}
     - target: {fileID: 5866666021909216657, guid: 3ba9210fbff18654a813e010f630eb4d, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
