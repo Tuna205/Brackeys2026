@@ -14,7 +14,8 @@ public class Drink : MonoBehaviour
         Angry,
         WaitingForDrinks,
         WaitingForDrinksAngry,
-        DrinkingAndGivingInfo
+        DrinkingAndGivingInfo,
+        Leaving
     }
 
     [Header("Input")]
@@ -61,6 +62,8 @@ public class Drink : MonoBehaviour
     private Transform door;
     private Coroutine soldierArrivalRoutine;
     private int expectedSoldierCount;
+    private int expectedLeavingSoldierCount;
+    private int soldiersAtDoorCount;
     private bool hasEnteredState;
     private bool stateMachineIsRunning;
 
@@ -253,6 +256,9 @@ public class Drink : MonoBehaviour
             case DrinkState.DrinkingAndGivingInfo:
                 OnEnterDrinkingAndGivingInfo();
                 break;
+            case DrinkState.Leaving:
+                OnEnterLeaving();
+                break;
         }
     }
 
@@ -280,6 +286,9 @@ public class Drink : MonoBehaviour
                 break;
             case DrinkState.DrinkingAndGivingInfo:
                 OnExitDrinkingAndGivingInfo();
+                break;
+            case DrinkState.Leaving:
+                OnExitLeaving();
                 break;
         }
     }
@@ -328,7 +337,7 @@ public class Drink : MonoBehaviour
     {
         ShowDrinkIndicator(redMaterial);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
-        StartStateTimer(AngryDuration, LeaveAngryAndReturnToEmpty);
+        StartStateTimer(AngryDuration, LeaveAngry);
     }
 
     private void OnExitAngry()
@@ -356,7 +365,7 @@ public class Drink : MonoBehaviour
         drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         SetActiveBeerScale(LargeBeerScale);
-        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngryAndReturnToEmpty);
+        StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngry);
     }
 
     private void OnExitWaitingForDrinksAngry()
@@ -378,6 +387,41 @@ public class Drink : MonoBehaviour
     {
         StopStateTimer();
         RestoreSoldierMaterials();
+    }
+
+    private void OnEnterLeaving()
+    {
+        drinkIndicator.SetActive(false);
+        DisableAllBeers();
+
+        List<Soldier> soldiersLeaving = new(table.ArrivedSoldiers);
+        expectedLeavingSoldierCount = soldiersLeaving.Count;
+        soldiersAtDoorCount = 0;
+
+        if (expectedLeavingSoldierCount == 0)
+        {
+            TransitionTo(DrinkState.Empty);
+            return;
+        }
+
+        foreach (Soldier soldier in soldiersLeaving)
+        {
+            soldier.BeginLeaving(OnSoldierExitedDoor);
+
+            SoldierMovement movement = soldier.GetComponent<SoldierMovement>();
+            if (movement == null
+                || !movement.MoveFromTo(soldier.transform.position, door, OnSoldierReachedDoor))
+            {
+                Debug.LogError("Soldier could not start leaving for the Door.", soldier);
+                soldier.ExitThroughDoor();
+            }
+        }
+    }
+
+    private void OnExitLeaving()
+    {
+        expectedLeavingSoldierCount = 0;
+        soldiersAtDoorCount = 0;
     }
 
     private void StartStateTimer(float duration, Action onFinished)
@@ -404,19 +448,14 @@ public class Drink : MonoBehaviour
         onFinished();
     }
 
-    private void LeaveAngryAndReturnToEmpty()
+    private void LeaveAngry()
     {
         CauseSoldiersLeavingAngry();
-        TransitionTo(DrinkState.Empty);
     }
 
     private void FinishDrinking()
     {
-        DrinkState nextState = UnityEngine.Random.value < 0.5f
-            ? DrinkState.WaitingForDrinks
-            : DrinkState.Empty;
-
-        TransitionTo(nextState);
+        TransitionTo(DrinkState.Leaving);
     }
 
     private void ShowDrinkIndicator(Material material)
@@ -521,6 +560,32 @@ public class Drink : MonoBehaviour
         }
     }
 
+    private void OnSoldierReachedDoor(SoldierMovement movement)
+    {
+        if (State != DrinkState.Leaving
+            || !movement.TryGetComponent(out Soldier soldier))
+        {
+            return;
+        }
+
+        soldier.ExitThroughDoor();
+    }
+
+    private void OnSoldierExitedDoor(Soldier soldier)
+    {
+        if (State != DrinkState.Leaving)
+        {
+            return;
+        }
+
+        soldiersAtDoorCount++;
+
+        if (soldiersAtDoorCount >= expectedLeavingSoldierCount)
+        {
+            TransitionTo(DrinkState.Empty);
+        }
+    }
+
     private void StopSoldierArrivals()
     {
         if (soldierArrivalRoutine != null)
@@ -545,6 +610,8 @@ public class Drink : MonoBehaviour
 
         spawnedSoldiers.Clear();
         expectedSoldierCount = 0;
+        expectedLeavingSoldierCount = 0;
+        soldiersAtDoorCount = 0;
     }
 
     private void EnableBeersForActiveSoldiers()
@@ -651,9 +718,12 @@ public class Drink : MonoBehaviour
         if (Suspition.instance == null)
         {
             Debug.LogError("Drink could not find the Suspition singleton.", this);
-            return;
+        }
+        else
+        {
+            Suspition.instance.Add(suspicionPenalty);
         }
 
-        Suspition.instance.Add(suspicionPenalty);
+        TransitionTo(DrinkState.Leaving);
     }
 }

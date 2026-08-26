@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public sealed class Soldier : MonoBehaviour
 {
@@ -29,13 +31,24 @@ public sealed class Soldier : MonoBehaviour
 
     private readonly GameObject[] modelOptions = new GameObject[ModelCount];
     private Animator animator;
+    private Action<Soldier> exitedDoorCallback;
 
     public SoldierType Type { get; private set; }
     public int ModelNumber { get; private set; }
     public GameObject ModelInstance { get; private set; }
+    public bool IsLeaving { get; private set; }
 
     private void Awake()
     {
+        if (!TryGetComponent(out Collider _))
+        {
+            CapsuleCollider bodyCollider = gameObject.AddComponent<CapsuleCollider>();
+            bodyCollider.center = new Vector3(0f, 1f, 0f);
+            bodyCollider.height = 2f;
+            bodyCollider.radius = 0.4f;
+            bodyCollider.isTrigger = true;
+        }
+
         if (models == null)
         {
             models = transform.Find("Models");
@@ -70,6 +83,8 @@ public sealed class Soldier : MonoBehaviour
         }
 
         int modelIndex = Random.Range(0, ModelCount);
+        IsLeaving = false;
+        exitedDoorCallback = null;
 
         for (int i = 0; i < ModelCount; i++)
         {
@@ -128,5 +143,35 @@ public sealed class Soldier : MonoBehaviour
         animator.SetBool(WaitingParameter, false);
         animator.SetBool(AngryParameter, false);
         animator.SetBool(ServedParameter, true);
+    }
+
+    public void BeginLeaving(Action<Soldier> onExitedDoor)
+    {
+        IsLeaving = true;
+        exitedDoorCallback = onExitedDoor;
+
+        if (animator == null)
+        {
+            return;
+        }
+
+        animator.SetBool(WaitingParameter, false);
+        animator.SetBool(AngryParameter, false);
+        animator.SetBool(ServedParameter, false);
+        animator.SetBool(LeavingParameter, true);
+    }
+
+    public void ExitThroughDoor()
+    {
+        if (!IsLeaving)
+        {
+            return;
+        }
+
+        IsLeaving = false;
+        Action<Soldier> callback = exitedDoorCallback;
+        exitedDoorCallback = null;
+        callback?.Invoke(this);
+        Destroy(gameObject);
     }
 }
