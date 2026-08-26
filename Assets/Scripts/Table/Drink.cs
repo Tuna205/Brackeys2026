@@ -35,7 +35,7 @@ public class Drink : MonoBehaviour
     private const float MinimumRequestDelay = 0f;
     private const float MaximumRequestDelay = 10f;
     private const float SoldierSpawnInterval = 1f;
-    private const float SoldierSpawnY = -1.55f;
+    private const float SoldierSpawnY = 0f;
     private const float PatientDuration = 15f;
     private const float AngryDuration = 30f;
     private const float WaitingForDrinksDuration = 30f;

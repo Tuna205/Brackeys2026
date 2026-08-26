@@ -2035,6 +2035,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Table
       objectReference: {fileID: 0}
+    - target: {fileID: 2406511570879234784, guid: 4fe3666e5b9cd6b4fb79052263d992ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5996837284735934074, guid: 4fe3666e5b9cd6b4fb79052263d992ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.5300002

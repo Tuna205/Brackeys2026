@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class SoldierMovement : MonoBehaviour
 {
     private const float ArrivalDistance = 0.1f;
@@ -10,20 +11,14 @@ public class SoldierMovement : MonoBehaviour
     private NavMeshAgent agent;
     private Transform destination;
     private Action<SoldierMovement> arrivedCallback;
-    private bool agentWasDetached;
     private bool isMoving;
     private float movementY;
 
     private void Awake()
     {
-        agent = GetComponentInChildren<NavMeshAgent>(true);
-        if (agent == null)
-        {
-            Debug.LogError("SoldierMovement needs a child NavMeshAgent.", this);
-            enabled = false;
-            return;
-        }
-
+        agent = GetComponent<NavMeshAgent>();
+        agent.updatePosition = false;
+        agent.updateRotation = false;
     }
 
     public bool MoveFromTo(
@@ -34,12 +29,6 @@ public class SoldierMovement : MonoBehaviour
         if (agent == null || target == null)
         {
             return false;
-        }
-
-        if (!agentWasDetached)
-        {
-            agent.transform.SetParent(null, true);
-            agentWasDetached = true;
         }
 
         if (!NavMesh.SamplePosition(
@@ -58,8 +47,8 @@ public class SoldierMovement : MonoBehaviour
         }
 
         movementY = spawnPosition.y;
-        transform.position = new Vector3(spawnHit.position.x, movementY, spawnHit.position.z);
         agent.Warp(spawnHit.position);
+        transform.position = new Vector3(spawnHit.position.x, movementY, spawnHit.position.z);
         destination = target;
         arrivedCallback = onArrived;
         isMoving = agent.SetDestination(destinationHit.position);
@@ -73,9 +62,16 @@ public class SoldierMovement : MonoBehaviour
             return;
         }
 
-        Vector3 soldierPosition = agent.transform.position;
+        Vector3 soldierPosition = agent.nextPosition;
         soldierPosition.y = movementY;
-        transform.SetPositionAndRotation(soldierPosition, agent.transform.rotation);
+        transform.position = soldierPosition;
+
+        Vector3 movementDirection = agent.desiredVelocity;
+        movementDirection.y = 0f;
+        if (movementDirection.sqrMagnitude > 0.001f)
+        {
+            transform.rotation = Quaternion.LookRotation(movementDirection, Vector3.up);
+        }
 
         if (agent.pathPending
             || agent.remainingDistance > agent.stoppingDistance + ArrivalDistance)
@@ -92,11 +88,4 @@ public class SoldierMovement : MonoBehaviour
         callback?.Invoke(this);
     }
 
-    private void OnDestroy()
-    {
-        if (agentWasDetached && agent != null)
-        {
-            Destroy(agent.gameObject);
-        }
-    }
 }
