@@ -327,6 +327,7 @@ public class Drink : MonoBehaviour
     private void OnEnterAngry()
     {
         ShowDrinkIndicator(redMaterial);
+        SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         StartStateTimer(AngryDuration, LeaveAngryAndReturnToEmpty);
     }
 
@@ -338,6 +339,7 @@ public class Drink : MonoBehaviour
     private void OnEnterWaitingForDrinks()
     {
         drinkIndicator.SetActive(false);
+        SetSoldierAnimations(soldier => soldier.SetWaitingAnimation());
         EnableBeersForActiveSoldiers();
         StartStateTimer(
             WaitingForDrinksDuration,
@@ -352,6 +354,7 @@ public class Drink : MonoBehaviour
     private void OnEnterWaitingForDrinksAngry()
     {
         drinkIndicator.SetActive(false);
+        SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         SetActiveBeerScale(LargeBeerScale);
         StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngryAndReturnToEmpty);
     }
@@ -365,6 +368,7 @@ public class Drink : MonoBehaviour
     private void OnEnterDrinkingAndGivingInfo()
     {
         drinkIndicator.SetActive(false);
+        SetSoldierAnimations(soldier => soldier.SetServedAnimation());
         DisableAllBeers();
         SetActiveSoldierMaterials(greenMaterial);
         StartStateTimer(DrinkingAndGivingInfoDuration, FinishDrinking);
@@ -509,6 +513,7 @@ public class Drink : MonoBehaviour
 
         soldier.transform.SetParent(soldierList, true);
         table.RegisterArrivedSoldier(soldier);
+        soldier.SetWaitingAnimation();
 
         if (table.ArrivedSoldiers.Count == expectedSoldierCount)
         {
@@ -591,6 +596,17 @@ public class Drink : MonoBehaviour
             if (beer != null)
             {
                 beer.localScale = scale;
+            }
+        }
+    }
+
+    private void SetSoldierAnimations(Action<Soldier> setAnimation)
+    {
+        foreach (Soldier soldier in table.ArrivedSoldiers)
+        {
+            if (soldier != null)
+            {
+                setAnimation(soldier);
             }
         }
     }
