@@ -1,10 +1,13 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public sealed class Soldier : MonoBehaviour
 {
     private const int ModelCount = 4;
+    private const float MinimumAnimationSpeed = 0.95f;
+    private const float MaximumAnimationSpeed = 1.05f;
 
     private static readonly int WaitingParameter = Animator.StringToHash("waiting");
     private static readonly int AngryParameter = Animator.StringToHash("angry");
@@ -32,6 +35,7 @@ public sealed class Soldier : MonoBehaviour
     private readonly GameObject[] modelOptions = new GameObject[ModelCount];
     private Animator animator;
     private Action<Soldier> exitedDoorCallback;
+    private Coroutine randomizeLoopStartRoutine;
 
     public SoldierType Type { get; private set; }
     public int ModelNumber { get; private set; }
@@ -106,6 +110,8 @@ public sealed class Soldier : MonoBehaviour
         animator.SetBool(AngryParameter, false);
         animator.SetBool(LeavingParameter, false);
         animator.SetBool(ServedParameter, false);
+        animator.speed = Random.Range(MinimumAnimationSpeed, MaximumAnimationSpeed);
+        QueueLoopStartRandomization();
     }
 
     public void SetWaitingAnimation()
@@ -118,6 +124,7 @@ public sealed class Soldier : MonoBehaviour
         animator.SetBool(AngryParameter, false);
         animator.SetBool(ServedParameter, false);
         animator.SetBool(WaitingParameter, true);
+        QueueLoopStartRandomization();
     }
 
     public void SetAngryAnimation()
@@ -131,6 +138,7 @@ public sealed class Soldier : MonoBehaviour
         animator.SetBool(WaitingParameter, false);
         animator.SetBool(ServedParameter, false);
         animator.SetBool(AngryParameter, true);
+        QueueLoopStartRandomization();
     }
 
     public void SetServedAnimation()
@@ -143,6 +151,7 @@ public sealed class Soldier : MonoBehaviour
         animator.SetBool(WaitingParameter, false);
         animator.SetBool(AngryParameter, false);
         animator.SetBool(ServedParameter, true);
+        QueueLoopStartRandomization();
     }
 
     public void BeginLeaving(Action<Soldier> onExitedDoor)
@@ -159,6 +168,7 @@ public sealed class Soldier : MonoBehaviour
         animator.SetBool(AngryParameter, false);
         animator.SetBool(ServedParameter, false);
         animator.SetBool(LeavingParameter, true);
+        QueueLoopStartRandomization();
     }
 
     public void ExitThroughDoor()
@@ -173,5 +183,36 @@ public sealed class Soldier : MonoBehaviour
         exitedDoorCallback = null;
         callback?.Invoke(this);
         Destroy(gameObject);
+    }
+
+    private void QueueLoopStartRandomization()
+    {
+        if (randomizeLoopStartRoutine != null)
+        {
+            StopCoroutine(randomizeLoopStartRoutine);
+        }
+
+        randomizeLoopStartRoutine = StartCoroutine(RandomizeLoopStartAfterTransition());
+    }
+
+    private IEnumerator RandomizeLoopStartAfterTransition()
+    {
+        yield return null;
+
+        while (animator != null && animator.IsInTransition(0))
+        {
+            yield return null;
+        }
+
+        if (animator != null)
+        {
+            AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+            if (state.loop)
+            {
+                animator.Play(state.fullPathHash, 0, Random.value);
+            }
+        }
+
+        randomizeLoopStartRoutine = null;
     }
 }
