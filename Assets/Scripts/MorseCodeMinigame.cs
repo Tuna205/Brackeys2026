@@ -23,7 +23,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
 
     private const float SymbolY = 80f;
     private const float DashWidth = 100f;
-    private const float SymbolSpeed = 260f;
+    private const float SymbolSpeed = 350f;
     private const float MinimumSpawnInterval = 1.1f;
     private const float MaximumSpawnInterval = 1.8f;
     private const float CorrectScore = 10f;
