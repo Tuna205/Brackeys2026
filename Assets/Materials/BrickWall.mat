@@ -105,6 +105,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 41d7aa346dc550248b9d1f4da4191274, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_9abcb11c51634b85bf26e97b08f33cf4_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: f37957140dae70248a85076822a7ce29, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_d0c689dea0b24644b9a4210351ee88a9_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 15e6f58395da67846a4f45f26b826c9e, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -147,6 +151,9 @@ Material:
     - _Glossiness: 0
     - _GlossinessSource: 0
     - _GlossyReflections: 0
+    - _GradientFalloff: 0.54
+    - _GradientNoise: 0.2
+    - _GradientOffset: -2.33
     - _Metallic: 0
     - _NormalStrength: 1
     - _OcclusionStrength: 1
@@ -173,7 +180,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _TilingAndOffset: {r: 1, g: 1, b: 0, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint: {r: 0.6132076, g: 0.51775545, b: 0.51775545, a: 1}
     - _TintColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

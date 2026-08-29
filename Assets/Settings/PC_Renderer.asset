@@ -16,7 +16,7 @@ MonoBehaviour:
   settings:
     material: {fileID: 2100000, guid: 137d519936d206948bee503da8a55d24, type: 2}
     injectionPoint: 300
-    Steps: 25
+    Steps: 45
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
