@@ -1,17 +1,20 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameOverController : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverUI = null;
+    [SerializeField] private TMP_Text scoreText = null;
 
     private Suspition suspition;
     private bool gameOverTriggered;
 
     private void Awake()
     {
-        if (gameOverUI == null)
+        if (gameOverUI == null || scoreText == null)
         {
-            Debug.LogError("GameOverController needs a GameOver UI object.", this);
+            Debug.LogError("GameOverController needs a GameOver UI object and score text.", this);
             enabled = false;
             return;
         }
@@ -64,7 +67,15 @@ public class GameOverController : MonoBehaviour
         }
 
         gameOverTriggered = true;
+        float score = Info.instance != null ? Info.instance.Value : 0f;
+        scoreText.text = $"{score:0}";
         gameOverUI.SetActive(true);
         Time.timeScale = 0f;
+    }
+
+    public void Retry()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
