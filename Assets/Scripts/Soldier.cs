@@ -34,6 +34,7 @@ public sealed class Soldier : MonoBehaviour
 
     private readonly GameObject[] modelOptions = new GameObject[ModelCount];
     private Animator animator;
+    private SoldierVoiceAudio voiceAudio;
     private Action<Soldier> exitedDoorCallback;
     private Coroutine randomizeLoopStartRoutine;
 
@@ -44,6 +45,8 @@ public sealed class Soldier : MonoBehaviour
 
     private void Awake()
     {
+        voiceAudio = GetComponent<SoldierVoiceAudio>();
+
         if (!TryGetComponent(out Collider _))
         {
             CapsuleCollider bodyCollider = gameObject.AddComponent<CapsuleCollider>();
@@ -154,8 +157,19 @@ public sealed class Soldier : MonoBehaviour
         QueueLoopStartRandomization();
     }
 
+    public void SetTalkingVolume(float volume)
+    {
+        voiceAudio?.SetVolume(volume);
+    }
+
+    public void StopTalking()
+    {
+        voiceAudio?.StopTalking();
+    }
+
     public void BeginLeaving(Action<Soldier> onExitedDoor)
     {
+        StopTalking();
         IsLeaving = true;
         exitedDoorCallback = onExitedDoor;
 

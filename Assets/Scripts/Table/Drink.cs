@@ -33,6 +33,13 @@ public class Drink : MonoBehaviour
     [SerializeField] private Soldier soldierPrefab = null;
     [SerializeField] private Material blackMaterial = null;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource pourAudioSource = null;
+    [SerializeField] private AudioClip pourClip = null;
+    [SerializeField, Range(0f, 1f)] private float lowTalkingVolume = 0.1f;
+    [SerializeField, Range(0f, 1f)] private float mediumTalkingVolume = 0.22f;
+    [SerializeField, Range(0f, 1f)] private float highTalkingVolume = 0.4f;
+
     private const float MinimumRequestDelay = 0f;
     private const float MaximumRequestDelay = 10f;
     private const float SoldierSpawnInterval = 1f;
@@ -333,6 +340,7 @@ public class Drink : MonoBehaviour
     private void OnEnterPatient()
     {
         ShowDrinkIndicator(greenMaterial);
+        SetSoldierTalkingVolume(lowTalkingVolume);
         StartStateTimer(PatientDuration, () => TransitionTo(DrinkState.Angry));
     }
 
@@ -345,6 +353,7 @@ public class Drink : MonoBehaviour
     {
         ShowDrinkIndicator(redMaterial);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
+        SetSoldierTalkingVolume(mediumTalkingVolume);
         StartStateTimer(AngryDuration, LeaveAngry);
     }
 
@@ -357,6 +366,7 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetWaitingAnimation());
+        SetSoldierTalkingVolume(lowTalkingVolume);
         EnableBeersForActiveSoldiers();
         StartStateTimer(
             WaitingForDrinksDuration,
@@ -372,6 +382,7 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
+        SetSoldierTalkingVolume(mediumTalkingVolume);
         SetActiveBeerScale(LargeBeerScale);
         StartStateTimer(WaitingForDrinksAngryDuration, LeaveAngry);
     }
@@ -386,6 +397,8 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetServedAnimation());
+        SetSoldierTalkingVolume(highTalkingVolume);
+        PlayPourSound();
         DisableAllBeers();
         SetActiveSoldierMaterials(greenMaterial);
         StartStateTimer(DrinkingAndGivingInfoDuration, FinishDrinking);
@@ -401,6 +414,7 @@ public class Drink : MonoBehaviour
     {
         drinkIndicator.SetActive(false);
         DisableAllBeers();
+        StopSoldierTalking();
 
         List<Soldier> soldiersLeaving = new(table.ArrivedSoldiers);
         expectedLeavingSoldierCount = soldiersLeaving.Count;
@@ -676,13 +690,39 @@ public class Drink : MonoBehaviour
 
     private void SetSoldierAnimations(Action<Soldier> setAnimation)
     {
+        ForEachArrivedSoldier(setAnimation);
+    }
+
+    private void SetSoldierTalkingVolume(float volume)
+    {
+        ForEachArrivedSoldier(soldier => soldier.SetTalkingVolume(volume));
+    }
+
+    private void StopSoldierTalking()
+    {
+        ForEachArrivedSoldier(soldier => soldier.StopTalking());
+    }
+
+    private void ForEachArrivedSoldier(Action<Soldier> action)
+    {
         foreach (Soldier soldier in table.ArrivedSoldiers)
         {
             if (soldier != null)
             {
-                setAnimation(soldier);
+                action(soldier);
             }
         }
+    }
+
+    private void PlayPourSound()
+    {
+        if (pourAudioSource == null || pourClip == null)
+        {
+            Debug.LogWarning("Drink is missing its pour AudioSource or SFX_Pour clip.", this);
+            return;
+        }
+
+        pourAudioSource.PlayOneShot(pourClip);
     }
 
     private void SetActiveSoldierMaterials(Material material)
