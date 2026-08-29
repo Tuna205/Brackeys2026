@@ -9,6 +9,7 @@ public class SoldierMovement : MonoBehaviour
     private const float NavMeshSampleDistance = 2f;
 
     private NavMeshAgent agent;
+    private FootstepAudio footstepAudio;
     private Transform destination;
     private Action<SoldierMovement> arrivedCallback;
     private bool isMoving;
@@ -17,6 +18,7 @@ public class SoldierMovement : MonoBehaviour
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        footstepAudio = GetComponent<FootstepAudio>();
         agent.updatePosition = false;
         agent.updateRotation = false;
     }
@@ -59,6 +61,7 @@ public class SoldierMovement : MonoBehaviour
     {
         if (!isMoving)
         {
+            footstepAudio?.SetWalking(false);
             return;
         }
 
@@ -73,6 +76,8 @@ public class SoldierMovement : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(movementDirection, Vector3.up);
         }
 
+        footstepAudio?.SetWalking(movementDirection.sqrMagnitude > 0.001f);
+
         if (agent.pathPending
             || agent.remainingDistance > agent.stoppingDistance + ArrivalDistance)
         {
@@ -80,6 +85,7 @@ public class SoldierMovement : MonoBehaviour
         }
 
         isMoving = false;
+        footstepAudio?.SetWalking(false);
         agent.ResetPath();
         transform.rotation = destination.rotation;
 

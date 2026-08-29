@@ -13,6 +13,7 @@ public sealed class PlayerMovement : MonoBehaviour
     private InputAction moveAction;
     private CharacterController characterController;
     private Animator animator;
+    private FootstepAudio footstepAudio;
     private Vector2 moveInput;
     private float fixedY;
 
@@ -21,6 +22,7 @@ public sealed class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         fixedY = transform.position.y;
         animator = GetComponentInChildren<Animator>(true);
+        footstepAudio = GetComponent<FootstepAudio>();
 
         if (animator == null)
         {
@@ -47,6 +49,7 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         moveInput = Vector2.zero;
         animator?.SetBool(WalkingParameter, false);
+        footstepAudio?.SetWalking(false);
 
         if (moveAction == null)
         {
@@ -61,9 +64,16 @@ public sealed class PlayerMovement : MonoBehaviour
     private void Update()
     {
         Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        Vector3 positionBeforeMove = transform.position;
         characterController.Move(direction * (moveSpeed * Time.deltaTime));
         RestoreFixedY();
-        animator?.SetBool(WalkingParameter, moveInput.sqrMagnitude > 0.01f);
+
+        Vector3 displacement = transform.position - positionBeforeMove;
+        displacement.y = 0f;
+        bool hasMovementInput = moveInput.sqrMagnitude > 0.01f;
+        bool isActuallyMoving = displacement.sqrMagnitude > 0.000001f;
+        animator?.SetBool(WalkingParameter, hasMovementInput);
+        footstepAudio?.SetWalking(isActuallyMoving);
 
         if (animator != null && direction.sqrMagnitude > 0f)
         {
