@@ -34,8 +34,6 @@ public class Drink : MonoBehaviour
     [SerializeField] private Material blackMaterial = null;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource pourAudioSource = null;
-    [SerializeField] private AudioClip pourClip = null;
     [SerializeField, Range(0f, 1f)] private float lowTalkingVolume = 0.1f;
     [SerializeField, Range(0f, 1f)] private float mediumTalkingVolume = 0.22f;
     [SerializeField, Range(0f, 1f)] private float highTalkingVolume = 0.4f;
@@ -398,7 +396,6 @@ public class Drink : MonoBehaviour
         drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetServedAnimation());
         SetSoldierTalkingVolume(highTalkingVolume);
-        PlayPourSound();
         DisableAllBeers();
         SetActiveSoldierMaterials(greenMaterial);
         StartStateTimer(DrinkingAndGivingInfoDuration, FinishDrinking);
@@ -712,17 +709,6 @@ public class Drink : MonoBehaviour
                 action(soldier);
             }
         }
-    }
-
-    private void PlayPourSound()
-    {
-        if (pourAudioSource == null || pourClip == null)
-        {
-            Debug.LogWarning("Drink is missing its pour AudioSource or SFX_Pour clip.", this);
-            return;
-        }
-
-        pourAudioSource.PlayOneShot(pourClip);
     }
 
     private void SetActiveSoldierMaterials(Material material)

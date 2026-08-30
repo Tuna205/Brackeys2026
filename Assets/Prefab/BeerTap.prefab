@@ -163,6 +163,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BeerTapTrigger
       objectReference: {fileID: 0}
+    - target: {fileID: 8900000000000000501, guid: 03765e502782e8741b1ac48abce62263, type: 3}
+      propertyPath: m_Volume
+      value: 0.155
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
