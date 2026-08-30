@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1780863690815005795}
   - component: {fileID: 3678697526629934522}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: Beer 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,8 @@ Transform:
   m_LocalPosition: {x: -0.07, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 9000000000000000102}
   m_Father: {fileID: 5671786780047102462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6782739918484734713
@@ -49,7 +50,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 784242018603396285}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -125,7 +126,7 @@ GameObject:
   - component: {fileID: 1590125611099902441}
   - component: {fileID: 2816085405433754995}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: Beer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,7 +144,8 @@ Transform:
   m_LocalPosition: {x: -0.48, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 9000000000000000202}
   m_Father: {fileID: 5671786780047102462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1424867589829697214
@@ -161,7 +163,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465210733660020583}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -237,7 +239,7 @@ GameObject:
   - component: {fileID: 346299690424589617}
   - component: {fileID: 7458409427792993887}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Beer 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -255,7 +257,8 @@ Transform:
   m_LocalPosition: {x: 0.35, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 9000000000000000302}
   m_Father: {fileID: 5671786780047102462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3149038867644182564
@@ -273,7 +276,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2523652620844366482}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -728,7 +731,7 @@ GameObject:
   - component: {fileID: 4659004570447126663}
   - component: {fileID: 2526353427516824688}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: Beer 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -746,7 +749,8 @@ Transform:
   m_LocalPosition: {x: -0.03, y: 0, z: 0.34}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 9000000000000000402}
   m_Father: {fileID: 5671786780047102462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1687469958335893209
@@ -764,7 +768,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6263513618015675002}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -840,7 +844,7 @@ GameObject:
   - component: {fileID: 643673913882810193}
   - component: {fileID: 5977581862613268490}
   m_Layer: 0
-  m_Name: Cube (4)
+  m_Name: Beer 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -858,7 +862,8 @@ Transform:
   m_LocalPosition: {x: -0.05, y: 0, z: -0.32}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 9000000000000000502}
   m_Father: {fileID: 5671786780047102462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4694968375718385306
@@ -876,7 +881,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7650286189212150227}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1080,4 +1085,114 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3b704a4a2af91104e9b32654d0da66f9, type: 3}
   m_PrefabInstance: {fileID: 5886637248695562416}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9000000000000000101
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1034829896052318418}
+    m_Modifications:
+    - target: {fileID: 4116267319663295884, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+      propertyPath: m_Name
+      value: BeerGlass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+--- !u!4 &9000000000000000102 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2436563657740615334, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+  m_PrefabInstance: {fileID: 9000000000000000101}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9000000000000000201
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1747433515574097701}
+    m_Modifications:
+    - target: {fileID: 4116267319663295884, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+      propertyPath: m_Name
+      value: BeerGlass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+--- !u!4 &9000000000000000202 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2436563657740615334, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+  m_PrefabInstance: {fileID: 9000000000000000201}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9000000000000000301
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3587280901009995277}
+    m_Modifications:
+    - target: {fileID: 4116267319663295884, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+      propertyPath: m_Name
+      value: BeerGlass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+--- !u!4 &9000000000000000302 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2436563657740615334, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+  m_PrefabInstance: {fileID: 9000000000000000301}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9000000000000000401
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7013616444595360561}
+    m_Modifications:
+    - target: {fileID: 4116267319663295884, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+      propertyPath: m_Name
+      value: BeerGlass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+--- !u!4 &9000000000000000402 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2436563657740615334, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+  m_PrefabInstance: {fileID: 9000000000000000401}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9000000000000000501
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4457983423713815922}
+    m_Modifications:
+    - target: {fileID: 4116267319663295884, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+      propertyPath: m_Name
+      value: BeerGlass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+--- !u!4 &9000000000000000502 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2436563657740615334, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+  m_PrefabInstance: {fileID: 9000000000000000501}
   m_PrefabAsset: {fileID: 0}

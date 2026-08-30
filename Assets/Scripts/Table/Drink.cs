@@ -647,9 +647,10 @@ public class Drink : MonoBehaviour
         foreach (Soldier soldier in table.ArrivedSoldiers)
         {
             Transform beer = soldier.transform.Find("Beer");
-            if (beer == null || !beer.TryGetComponent(out Renderer beerRenderer))
+            Renderer beerRenderer = GetBeerRenderer(beer);
+            if (beerRenderer == null)
             {
-                Debug.LogError($"{soldier.name} needs a Beer child with a Renderer.", soldier);
+                Debug.LogError($"{soldier.name} needs a Beer child containing a Renderer.", soldier);
                 continue;
             }
 
@@ -717,9 +718,11 @@ public class Drink : MonoBehaviour
 
         foreach (Soldier soldier in table.ArrivedSoldiers)
         {
+            Transform beer = soldier.transform.Find("Beer");
+
             foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>())
             {
-                if (soldierRenderer.transform.name == "Beer")
+                if (beer != null && soldierRenderer.transform.IsChildOf(beer))
                 {
                     continue;
                 }
@@ -744,6 +747,26 @@ public class Drink : MonoBehaviour
         }
 
         originalSoldierMaterials.Clear();
+    }
+
+    private static Renderer GetBeerRenderer(Transform beer)
+    {
+        if (beer == null)
+        {
+            return null;
+        }
+
+        foreach (Renderer beerRenderer in beer.GetComponentsInChildren<Renderer>(true))
+        {
+            if (beerRenderer.enabled
+                && (beerRenderer.sharedMaterial == null
+                    || beerRenderer.sharedMaterial.name != "Foam"))
+            {
+                return beerRenderer;
+            }
+        }
+
+        return null;
     }
 
     private void CauseSoldiersLeavingAngry()
