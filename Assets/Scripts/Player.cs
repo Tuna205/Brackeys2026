@@ -5,6 +5,9 @@ public class Player : MonoBehaviour
 {
     public const int MaximumBeers = 5;
 
+    private static readonly int BartenderingParameter = Animator.StringToHash("bartendering");
+    private static readonly int BartenderWalkWithPlateState = Animator.StringToHash("Base Layer.BartenderWalk_02");
+
     public static Player instance { get; private set; }
 
     public enum BeerTypes
@@ -20,6 +23,8 @@ public class Player : MonoBehaviour
     [SerializeField] private Material whiteBeerMaterial = null;
     [SerializeField] private Material redBeerMaterial = null;
     [SerializeField] private Material darkBeerMaterial = null;
+    [SerializeField] private Animator playerAnimator = null;
+    [SerializeField] private GameObject plateObject = null;
 
     public IReadOnlyList<BeerTypes> Beers => beers;
 
@@ -39,6 +44,30 @@ public class Player : MonoBehaviour
             beers.RemoveRange(MaximumBeers, beers.Count - MaximumBeers);
         }
 
+        if (playerAnimator == null)
+        {
+            playerAnimator = GetComponentInChildren<Animator>();
+        }
+
+        if (playerAnimator == null)
+        {
+            Debug.LogError("Player needs an Animator for the bartendering parameter.", this);
+        }
+
+        if (plateObject == null)
+        {
+            plateObject = FindChildGameObject("SM_Plate");
+        }
+
+        if (plateObject == null)
+        {
+            Debug.LogError("Player needs an SM_Plate child for the bartender walking animation.", this);
+        }
+        else
+        {
+            plateObject.SetActive(false);
+        }
+
         if (beerHolder == null)
         {
             beerHolder = transform.Find("BeerHolder");
@@ -51,6 +80,28 @@ public class Player : MonoBehaviour
         }
 
         RefreshBeerHolder();
+    }
+
+    private void LateUpdate()
+    {
+        if (playerAnimator == null || plateObject == null)
+        {
+            return;
+        }
+
+        AnimatorStateInfo currentState = playerAnimator.GetCurrentAnimatorStateInfo(0);
+        bool shouldShowPlate = currentState.fullPathHash == BartenderWalkWithPlateState;
+
+        if (playerAnimator.IsInTransition(0))
+        {
+            AnimatorStateInfo nextState = playerAnimator.GetNextAnimatorStateInfo(0);
+            shouldShowPlate |= nextState.fullPathHash == BartenderWalkWithPlateState;
+        }
+
+        if (plateObject.activeSelf != shouldShowPlate)
+        {
+            plateObject.SetActive(shouldShowPlate);
+        }
     }
 
     public bool AddBeer(BeerTypes beerType)
@@ -90,6 +141,11 @@ public class Player : MonoBehaviour
 
     private void RefreshBeerHolder()
     {
+        if (playerAnimator != null)
+        {
+            playerAnimator.SetBool(BartenderingParameter, beers.Count > 0);
+        }
+
         for (int i = 0; i < beerHolder.childCount; i++)
         {
             GameObject beerVisual = beerHolder.GetChild(i).gameObject;
@@ -129,6 +185,27 @@ public class Player : MonoBehaviour
             BeerTypes.Dark => darkBeerMaterial,
             _ => null
         };
+    }
+
+    private GameObject FindChildGameObject(string childName)
+    {
+        foreach (Transform child in GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == childName)
+            {
+                return child.gameObject;
+            }
+        }
+
+        return null;
+    }
+
+    private void OnDisable()
+    {
+        if (plateObject != null)
+        {
+            plateObject.SetActive(false);
+        }
     }
 
     private void OnDestroy()
