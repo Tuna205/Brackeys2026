@@ -95,13 +95,29 @@ public class Player : MonoBehaviour
             GameObject beerVisual = beerHolder.GetChild(i).gameObject;
             bool hasBeer = i < beers.Count && i < MaximumBeers;
 
-            if (hasBeer && beerVisual.TryGetComponent(out Renderer beerRenderer))
+            Renderer beerRenderer = GetBeerRenderer(beerVisual.transform);
+            if (hasBeer && beerRenderer != null)
             {
                 beerRenderer.sharedMaterial = GetBeerMaterial(beers[i]);
             }
 
             beerVisual.SetActive(hasBeer);
         }
+    }
+
+    private static Renderer GetBeerRenderer(Transform beerVisual)
+    {
+        foreach (Renderer beerRenderer in beerVisual.GetComponentsInChildren<Renderer>(true))
+        {
+            if (beerRenderer.enabled
+                && (beerRenderer.sharedMaterial == null
+                    || beerRenderer.sharedMaterial.name != "Foam"))
+            {
+                return beerRenderer;
+            }
+        }
+
+        return null;
     }
 
     private Material GetBeerMaterial(BeerTypes beerType)

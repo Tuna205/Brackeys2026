@@ -25,13 +25,16 @@ public class Drink : MonoBehaviour
     [SerializeField] private GameObject drinkIndicator = null;
     [SerializeField] private Renderer indicatorRenderer = null;
     [SerializeField] private Material greenMaterial = null;
-    [SerializeField] private Material yellowMaterial = null;
     [SerializeField] private Material redMaterial = null;
 
     [Header("Soldiers")]
     [SerializeField] private Transform soldierList = null;
     [SerializeField] private Soldier soldierPrefab = null;
     [SerializeField] private Material blackMaterial = null;
+
+    [Header("Beer Materials")]
+    [SerializeField] private Material brassBeerMaterial = null;
+    [SerializeField] private Material redBeerMaterial = null;
 
     [Header("Audio")]
     [SerializeField, Range(0f, 1f)] private float lowTalkingVolume = 0.1f;
@@ -634,7 +637,7 @@ public class Drink : MonoBehaviour
 
     private void EnableBeersForActiveSoldiers()
     {
-        Material[] beerMaterials = { yellowMaterial, redMaterial, blackMaterial };
+        Material[] beerMaterials = { brassBeerMaterial, redBeerMaterial, blackMaterial };
         Player.BeerTypes[] beerTypes =
         {
             Player.BeerTypes.White,
@@ -647,9 +650,10 @@ public class Drink : MonoBehaviour
         foreach (Soldier soldier in table.ArrivedSoldiers)
         {
             Transform beer = soldier.transform.Find("Beer");
-            if (beer == null || !beer.TryGetComponent(out Renderer beerRenderer))
+            Renderer beerRenderer = GetBeerRenderer(beer);
+            if (beerRenderer == null)
             {
-                Debug.LogError($"{soldier.name} needs a Beer child with a Renderer.", soldier);
+                Debug.LogError($"{soldier.name} needs a Beer child containing a Renderer.", soldier);
                 continue;
             }
 
@@ -717,9 +721,11 @@ public class Drink : MonoBehaviour
 
         foreach (Soldier soldier in table.ArrivedSoldiers)
         {
+            Transform beer = soldier.transform.Find("Beer");
+
             foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>())
             {
-                if (soldierRenderer.transform.name == "Beer")
+                if (beer != null && soldierRenderer.transform.IsChildOf(beer))
                 {
                     continue;
                 }
@@ -744,6 +750,26 @@ public class Drink : MonoBehaviour
         }
 
         originalSoldierMaterials.Clear();
+    }
+
+    private static Renderer GetBeerRenderer(Transform beer)
+    {
+        if (beer == null)
+        {
+            return null;
+        }
+
+        foreach (Renderer beerRenderer in beer.GetComponentsInChildren<Renderer>(true))
+        {
+            if (beerRenderer.enabled
+                && (beerRenderer.sharedMaterial == null
+                    || beerRenderer.sharedMaterial.name != "Foam"))
+            {
+                return beerRenderer;
+            }
+        }
+
+        return null;
     }
 
     private void CauseSoldiersLeavingAngry()

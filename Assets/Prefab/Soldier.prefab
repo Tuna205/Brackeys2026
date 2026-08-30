@@ -66,7 +66,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.17, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 9000000000000000602}
   m_Father: {fileID: 1404974808863215678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &140741577507042712
@@ -84,7 +85,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5135459779775158390}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -818,4 +819,26 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3ba9210fbff18654a813e010f630eb4d, type: 3}
   m_PrefabInstance: {fileID: 8690119836975970371}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9000000000000000601
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8784197892863343023}
+    m_Modifications:
+    - target: {fileID: 4116267319663295884, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+      propertyPath: m_Name
+      value: BeerGlass
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+--- !u!4 &9000000000000000602 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2436563657740615334, guid: 7d4c84a1cb4346745ba3e14516d05304, type: 3}
+  m_PrefabInstance: {fileID: 9000000000000000601}
   m_PrefabAsset: {fileID: 0}
