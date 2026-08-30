@@ -1,13 +1,19 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class BeerTap : MonoBehaviour
 {
+    private const float PourSoundDuration = 3f;
+
     [SerializeField] private InputActionAsset inputActions = null;
     [SerializeField] private Player.BeerTypes beerType = Player.BeerTypes.White;
+    [SerializeField] private AudioSource pourAudioSource = null;
+    [SerializeField] private AudioClip pourClip = null;
 
     private InputAction interactAction;
     private Collider playerColliderInside;
+    private Coroutine stopPourSoundRoutine;
 
     private void Awake()
     {
@@ -35,6 +41,7 @@ public class BeerTap : MonoBehaviour
             interactAction.Disable();
         }
 
+        StopPourSound();
         playerColliderInside = null;
     }
 
@@ -63,9 +70,43 @@ public class BeerTap : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        if (playerColliderInside != null)
+        if (playerColliderInside != null && Player.instance.AddBeer(beerType))
         {
-            Player.instance.AddBeer(beerType);
+            PlayPourSound();
+        }
+    }
+
+    private void PlayPourSound()
+    {
+        if (pourAudioSource == null || pourClip == null)
+        {
+            Debug.LogWarning("BeerTap is missing its pour AudioSource or SFX_Pour clip.", this);
+            return;
+        }
+
+        StopPourSound();
+        pourAudioSource.PlayOneShot(pourClip);
+        stopPourSoundRoutine = StartCoroutine(StopPourSoundAfterDuration());
+    }
+
+    private IEnumerator StopPourSoundAfterDuration()
+    {
+        yield return new WaitForSeconds(PourSoundDuration);
+        pourAudioSource.Stop();
+        stopPourSoundRoutine = null;
+    }
+
+    private void StopPourSound()
+    {
+        if (stopPourSoundRoutine != null)
+        {
+            StopCoroutine(stopPourSoundRoutine);
+            stopPourSoundRoutine = null;
+        }
+
+        if (pourAudioSource != null)
+        {
+            pourAudioSource.Stop();
         }
     }
 
