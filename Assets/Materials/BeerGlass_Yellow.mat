@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BeerGlass_01
+  m_Name: BeerGlass_Yellow
   m_Shader: {fileID: -6465566751694194690, guid: 9d27a1d0e77f9c445a9f8d7bfd00a285, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -135,7 +135,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 0.29213873, b: 0.1462264, a: 0.7294118}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 1, g: 0.2921387, b: 0.14622638, a: 0.7294118}
+    - _Color: {r: 1, g: 0.8745098, b: 0.34509805, a: 1}
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}

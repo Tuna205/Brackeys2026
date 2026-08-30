@@ -24,11 +24,11 @@ public class Drink : MonoBehaviour
     [Header("Soldiers")]
     [SerializeField] private Transform soldierList = null;
     [SerializeField] private Soldier soldierPrefab = null;
-    [SerializeField] private Material blackMaterial = null;
 
     [Header("Beer Materials")]
-    [SerializeField] private Material brassBeerMaterial = null;
+    [SerializeField] private Material whiteBeerMaterial = null;
     [SerializeField] private Material redBeerMaterial = null;
+    [SerializeField] private Material darkBeerMaterial = null;
 
     [Header("Audio")]
     [SerializeField, Range(0f, 1f)] private float lowTalkingVolume = 0.1f;
@@ -577,7 +577,7 @@ public class Drink : MonoBehaviour
 
     private void EnableBeersForActiveSoldiers()
     {
-        Material[] beerMaterials = { brassBeerMaterial, redBeerMaterial, blackMaterial };
+        Material[] beerMaterials = { whiteBeerMaterial, redBeerMaterial, darkBeerMaterial };
         Player.BeerTypes[] beerTypes =
         {
             Player.BeerTypes.White,
