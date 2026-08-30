@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -40,6 +41,9 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     [SerializeField] private Sprite transmitterOpenSprite = null;
     [SerializeField] private Sprite transmitterClosedSprite = null;
     [SerializeField, Min(0.1f)] private float dashHoldDuration = 0.2f;
+    [SerializeField] private AudioSource morseAudioSource = null;
+    [SerializeField] private AudioClip morseCodeClip = null;
+    [SerializeField, Min(0.02f)] private float dotSoundDuration = 0.1f;
 
     private readonly List<ActiveSymbol> activeSymbols = new();
 
@@ -50,6 +54,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
     private bool missingInfoWasReported;
     private bool missingSuspitionWasReported;
     private bool ignoreSpaceUntilReleased;
+    private Coroutine dotSoundRoutine;
 
     private void Awake()
     {
@@ -60,7 +65,9 @@ public sealed class MorseCodeMinigame : MonoBehaviour
             || dashPrefab == null
             || transmitterImage == null
             || transmitterOpenSprite == null
-            || transmitterClosedSprite == null)
+            || transmitterClosedSprite == null
+            || morseAudioSource == null
+            || morseCodeClip == null)
         {
             Debug.LogError("Morse Code Minigame is missing its scene UI references.", this);
             enabled = false;
@@ -124,6 +131,11 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         {
             SpawnOpeningSymbols();
         }
+    }
+
+    private void OnDisable()
+    {
+        StopMorseSound();
     }
 
     private void OnDestroy()
@@ -219,6 +231,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
 
                         if (symbol.DashHoldProgress >= 1f)
                         {
+                            StopMorseSound();
                             AddInfo(CorrectScore);
                             RemoveSymbolAt(i);
                             continue;
@@ -241,6 +254,7 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         int dotIndex = FindSymbolInsideTarget(MorseSymbolType.Dot);
         if (dotIndex >= 0)
         {
+            PlayDotSound();
             AddInfo(CorrectScore);
             RemoveSymbolAt(dotIndex);
             return;
@@ -250,14 +264,16 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         if (dashIndex >= 0)
         {
             activeSymbols[dashIndex].DashHoldActive = true;
+            PlayDashSound();
             return;
         }
 
         AddInfo(IncorrectScore);
     }
 
-    private static void ResetDashHold(ActiveSymbol symbol)
+    private void ResetDashHold(ActiveSymbol symbol)
     {
+        StopMorseSound();
         symbol.DashHoldActive = false;
         symbol.DashHoldProgress = 0f;
 
@@ -279,6 +295,45 @@ public sealed class MorseCodeMinigame : MonoBehaviour
         transmitterImage.sprite = spaceIsHeld
             ? transmitterClosedSprite
             : transmitterOpenSprite;
+    }
+
+    private void PlayDotSound()
+    {
+        StopMorseSound();
+        morseAudioSource.clip = morseCodeClip;
+        morseAudioSource.loop = false;
+        morseAudioSource.Play();
+        dotSoundRoutine = StartCoroutine(StopDotSoundAfterDuration());
+    }
+
+    private void PlayDashSound()
+    {
+        StopMorseSound();
+        morseAudioSource.clip = morseCodeClip;
+        morseAudioSource.loop = true;
+        morseAudioSource.Play();
+    }
+
+    private IEnumerator StopDotSoundAfterDuration()
+    {
+        yield return new WaitForSeconds(dotSoundDuration);
+        morseAudioSource.Stop();
+        dotSoundRoutine = null;
+    }
+
+    private void StopMorseSound()
+    {
+        if (dotSoundRoutine != null)
+        {
+            StopCoroutine(dotSoundRoutine);
+            dotSoundRoutine = null;
+        }
+
+        if (morseAudioSource != null)
+        {
+            morseAudioSource.Stop();
+            morseAudioSource.loop = false;
+        }
     }
 
     private int FindSymbolInsideTarget(MorseSymbolType type)
