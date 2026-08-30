@@ -21,6 +21,12 @@ public class Drink : MonoBehaviour
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions = null;
 
+    [Header("Indicator")]
+    [SerializeField] private GameObject drinkIndicator = null;
+    [SerializeField] private Renderer indicatorRenderer = null;
+    [SerializeField] private Material greenMaterial = null;
+    [SerializeField] private Material redMaterial = null;
+
     [Header("Soldiers")]
     [SerializeField] private Transform soldierList = null;
     [SerializeField] private Soldier soldierPrefab = null;
@@ -80,6 +86,32 @@ public class Drink : MonoBehaviour
         }
 
         interactAction = inputActions.FindAction("Player/Jump", true).Clone();
+
+        if (drinkIndicator == null)
+        {
+            Transform indicator = transform.Find("Drink_Indicator");
+            if (indicator == null)
+            {
+                indicator = transform.Find("Drink");
+            }
+
+            if (indicator != null)
+            {
+                drinkIndicator = indicator.gameObject;
+            }
+        }
+
+        if (indicatorRenderer == null && drinkIndicator != null)
+        {
+            indicatorRenderer = drinkIndicator.GetComponent<Renderer>();
+        }
+
+        if (drinkIndicator == null || indicatorRenderer == null)
+        {
+            Debug.LogError("Drink needs a child indicator with a Renderer.", this);
+            enabled = false;
+            return;
+        }
 
         table = GetComponent<Table>();
         if (table == null)
@@ -167,6 +199,11 @@ public class Drink : MonoBehaviour
         {
             interactAction.performed -= OnInteract;
             interactAction.Disable();
+        }
+
+        if (drinkIndicator != null)
+        {
+            drinkIndicator.SetActive(false);
         }
 
         SetActiveBeerScale(SmallBeerScale);
@@ -275,6 +312,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterEmpty()
     {
+        drinkIndicator.SetActive(false);
         requiredBeers.Clear();
         RemoveAllSoldiers();
 
@@ -322,6 +360,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterSoldiersArriving()
     {
+        drinkIndicator.SetActive(false);
         StartSoldierArrivals();
     }
 
@@ -332,6 +371,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterPatient()
     {
+        ShowDrinkIndicator(greenMaterial);
         SetSoldierTalkingVolume(lowTalkingVolume);
         StartStateTimer(PatientDuration, () => TransitionTo(DrinkState.Angry));
     }
@@ -343,6 +383,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterAngry()
     {
+        ShowDrinkIndicator(redMaterial);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         SetSoldierTalkingVolume(mediumTalkingVolume);
         StartStateTimer(AngryDuration, LeaveAngry);
@@ -355,6 +396,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterWaitingForDrinks()
     {
+        drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetWaitingAnimation());
         SetSoldierTalkingVolume(lowTalkingVolume);
         EnableBeersForActiveSoldiers();
@@ -370,6 +412,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterWaitingForDrinksAngry()
     {
+        drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         SetSoldierTalkingVolume(mediumTalkingVolume);
         SetActiveBeerScale(LargeBeerScale);
@@ -384,6 +427,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterDrinkingAndGivingInfo()
     {
+        drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetServedAnimation());
         SetSoldierTalkingVolume(highTalkingVolume);
         DisableAllBeers();
@@ -397,6 +441,7 @@ public class Drink : MonoBehaviour
 
     private void OnEnterLeaving()
     {
+        drinkIndicator.SetActive(false);
         DisableAllBeers();
         StopSoldierTalking();
 
@@ -462,6 +507,18 @@ public class Drink : MonoBehaviour
     private void FinishDrinking()
     {
         TransitionTo(DrinkState.Leaving);
+    }
+
+    private void ShowDrinkIndicator(Material material)
+    {
+        if (material == null)
+        {
+            Debug.LogError($"Drink is missing the material for its {State} state.", this);
+            return;
+        }
+
+        indicatorRenderer.sharedMaterial = material;
+        drinkIndicator.SetActive(true);
     }
 
     private void TryDeliverDrinks()
