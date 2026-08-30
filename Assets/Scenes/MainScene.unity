@@ -127,6 +127,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 61674675584126241, guid: 771f5118b87f34a40aa7a2e846642e4f, type: 3}
+      propertyPath: m_WarningMessage
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'mixamorig:RightArm'\n\tTransform 'mixamorig:RightForeArm'\n\tTransform
+        'mixamorig:RightShoulder'\n\tFrom animation clip 'BartenderWalk_02'"
+      objectReference: {fileID: 0}
     - target: {fileID: 317245193657071917, guid: 771f5118b87f34a40aa7a2e846642e4f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.588
