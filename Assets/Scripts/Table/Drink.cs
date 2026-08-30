@@ -21,20 +21,14 @@ public class Drink : MonoBehaviour
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions = null;
 
-    [Header("Indicator")]
-    [SerializeField] private GameObject drinkIndicator = null;
-    [SerializeField] private Renderer indicatorRenderer = null;
-    [SerializeField] private Material greenMaterial = null;
-    [SerializeField] private Material redMaterial = null;
-
     [Header("Soldiers")]
     [SerializeField] private Transform soldierList = null;
     [SerializeField] private Soldier soldierPrefab = null;
-    [SerializeField] private Material blackMaterial = null;
 
     [Header("Beer Materials")]
-    [SerializeField] private Material brassBeerMaterial = null;
+    [SerializeField] private Material whiteBeerMaterial = null;
     [SerializeField] private Material redBeerMaterial = null;
+    [SerializeField] private Material darkBeerMaterial = null;
 
     [Header("Audio")]
     [SerializeField, Range(0f, 1f)] private float lowTalkingVolume = 0.1f;
@@ -64,7 +58,6 @@ public class Drink : MonoBehaviour
     private readonly List<Transform> soldierPositions = new();
     private readonly List<Soldier> spawnedSoldiers = new();
     private readonly List<Player.BeerTypes> requiredBeers = new();
-    private readonly Dictionary<Renderer, Material[]> originalSoldierMaterials = new();
     private Player player;
     private Transform door;
     private Transform soldierSpawn;
@@ -85,32 +78,6 @@ public class Drink : MonoBehaviour
         }
 
         interactAction = inputActions.FindAction("Player/Jump", true).Clone();
-
-        if (drinkIndicator == null)
-        {
-            Transform indicator = transform.Find("Drink_Indicator");
-            if (indicator == null)
-            {
-                indicator = transform.Find("Drink");
-            }
-
-            if (indicator != null)
-            {
-                drinkIndicator = indicator.gameObject;
-            }
-        }
-
-        if (indicatorRenderer == null && drinkIndicator != null)
-        {
-            indicatorRenderer = drinkIndicator.GetComponent<Renderer>();
-        }
-
-        if (drinkIndicator == null || indicatorRenderer == null)
-        {
-            Debug.LogError("Drink needs a child indicator with a Renderer.", this);
-            enabled = false;
-            return;
-        }
 
         table = GetComponent<Table>();
         if (table == null)
@@ -198,11 +165,6 @@ public class Drink : MonoBehaviour
         {
             interactAction.performed -= OnInteract;
             interactAction.Disable();
-        }
-
-        if (drinkIndicator != null)
-        {
-            drinkIndicator.SetActive(false);
         }
 
         SetActiveBeerScale(SmallBeerScale);
@@ -311,7 +273,6 @@ public class Drink : MonoBehaviour
 
     private void OnEnterEmpty()
     {
-        drinkIndicator.SetActive(false);
         requiredBeers.Clear();
         RemoveAllSoldiers();
 
@@ -329,7 +290,6 @@ public class Drink : MonoBehaviour
 
     private void OnEnterSoldiersArriving()
     {
-        drinkIndicator.SetActive(false);
         StartSoldierArrivals();
     }
 
@@ -340,7 +300,6 @@ public class Drink : MonoBehaviour
 
     private void OnEnterPatient()
     {
-        ShowDrinkIndicator(greenMaterial);
         SetSoldierTalkingVolume(lowTalkingVolume);
         StartStateTimer(PatientDuration, () => TransitionTo(DrinkState.Angry));
     }
@@ -352,7 +311,6 @@ public class Drink : MonoBehaviour
 
     private void OnEnterAngry()
     {
-        ShowDrinkIndicator(redMaterial);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         SetSoldierTalkingVolume(mediumTalkingVolume);
         StartStateTimer(AngryDuration, LeaveAngry);
@@ -365,7 +323,6 @@ public class Drink : MonoBehaviour
 
     private void OnEnterWaitingForDrinks()
     {
-        drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetWaitingAnimation());
         SetSoldierTalkingVolume(lowTalkingVolume);
         EnableBeersForActiveSoldiers();
@@ -381,7 +338,6 @@ public class Drink : MonoBehaviour
 
     private void OnEnterWaitingForDrinksAngry()
     {
-        drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetAngryAnimation());
         SetSoldierTalkingVolume(mediumTalkingVolume);
         SetActiveBeerScale(LargeBeerScale);
@@ -396,23 +352,19 @@ public class Drink : MonoBehaviour
 
     private void OnEnterDrinkingAndGivingInfo()
     {
-        drinkIndicator.SetActive(false);
         SetSoldierAnimations(soldier => soldier.SetServedAnimation());
         SetSoldierTalkingVolume(highTalkingVolume);
         DisableAllBeers();
-        SetActiveSoldierMaterials(greenMaterial);
         StartStateTimer(DrinkingAndGivingInfoDuration, FinishDrinking);
     }
 
     private void OnExitDrinkingAndGivingInfo()
     {
         StopStateTimer();
-        RestoreSoldierMaterials();
     }
 
     private void OnEnterLeaving()
     {
-        drinkIndicator.SetActive(false);
         DisableAllBeers();
         StopSoldierTalking();
 
@@ -478,18 +430,6 @@ public class Drink : MonoBehaviour
     private void FinishDrinking()
     {
         TransitionTo(DrinkState.Leaving);
-    }
-
-    private void ShowDrinkIndicator(Material material)
-    {
-        if (material == null)
-        {
-            Debug.LogError($"Drink is missing the material for its {State} state.", this);
-            return;
-        }
-
-        indicatorRenderer.sharedMaterial = material;
-        drinkIndicator.SetActive(true);
     }
 
     private void TryDeliverDrinks()
@@ -637,7 +577,7 @@ public class Drink : MonoBehaviour
 
     private void EnableBeersForActiveSoldiers()
     {
-        Material[] beerMaterials = { brassBeerMaterial, redBeerMaterial, blackMaterial };
+        Material[] beerMaterials = { whiteBeerMaterial, redBeerMaterial, darkBeerMaterial };
         Player.BeerTypes[] beerTypes =
         {
             Player.BeerTypes.White,
@@ -713,43 +653,6 @@ public class Drink : MonoBehaviour
                 action(soldier);
             }
         }
-    }
-
-    private void SetActiveSoldierMaterials(Material material)
-    {
-        originalSoldierMaterials.Clear();
-
-        foreach (Soldier soldier in table.ArrivedSoldiers)
-        {
-            Transform beer = soldier.transform.Find("Beer");
-
-            foreach (Renderer soldierRenderer in soldier.GetComponentsInChildren<Renderer>())
-            {
-                if (beer != null && soldierRenderer.transform.IsChildOf(beer))
-                {
-                    continue;
-                }
-
-                originalSoldierMaterials.Add(soldierRenderer, soldierRenderer.sharedMaterials);
-
-                Material[] materials = new Material[soldierRenderer.sharedMaterials.Length];
-                Array.Fill(materials, material);
-                soldierRenderer.sharedMaterials = materials;
-            }
-        }
-    }
-
-    private void RestoreSoldierMaterials()
-    {
-        foreach (KeyValuePair<Renderer, Material[]> soldierRenderer in originalSoldierMaterials)
-        {
-            if (soldierRenderer.Key != null)
-            {
-                soldierRenderer.Key.sharedMaterials = soldierRenderer.Value;
-            }
-        }
-
-        originalSoldierMaterials.Clear();
     }
 
     private static Renderer GetBeerRenderer(Transform beer)
