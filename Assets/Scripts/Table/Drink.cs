@@ -35,8 +35,8 @@ public class Drink : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float mediumTalkingVolume = 0.22f;
     [SerializeField, Range(0f, 1f)] private float highTalkingVolume = 0.4f;
 
-    private const float MinimumRequestDelay = 0f;
-    private const float MaximumRequestDelay = 10f;
+    private const float MinimumRequestDelay = 5f;
+    private const float MaximumRequestDelay = 30f;
     private const float SoldierSpawnInterval = 1f;
     private const float PatientDuration = 15f;
     private const float AngryDuration = 30f;
@@ -47,6 +47,7 @@ public class Drink : MonoBehaviour
     private const int MaximumSoldiersPerTable = 4;
     private static readonly Vector3 SmallBeerScale = Vector3.one * 0.2f;
     private static readonly Vector3 LargeBeerScale = Vector3.one * 0.4f;
+    private static Drink initialSpawnTable;
 
     private float suspicionPenalty = 30f;
 
@@ -67,6 +68,7 @@ public class Drink : MonoBehaviour
     private int soldiersAtDoorCount;
     private bool hasEnteredState;
     private bool stateMachineIsRunning;
+    private bool hasScheduledInitialRequest;
 
     private void Awake()
     {
@@ -278,8 +280,38 @@ public class Drink : MonoBehaviour
 
         if (stateMachineIsRunning)
         {
-            float requestDelay = UnityEngine.Random.Range(MinimumRequestDelay, MaximumRequestDelay);
+            float requestDelay = GetNextRequestDelay();
             StartStateTimer(requestDelay, () => TransitionTo(DrinkState.SoldiersArriving));
+        }
+    }
+
+    private float GetNextRequestDelay()
+    {
+        if (!hasScheduledInitialRequest)
+        {
+            hasScheduledInitialRequest = true;
+            SelectInitialSpawnTable();
+
+            if (initialSpawnTable == this)
+            {
+                return 0f;
+            }
+        }
+
+        return UnityEngine.Random.Range(MinimumRequestDelay, MaximumRequestDelay);
+    }
+
+    private static void SelectInitialSpawnTable()
+    {
+        if (initialSpawnTable != null)
+        {
+            return;
+        }
+
+        Drink[] tables = FindObjectsByType<Drink>(FindObjectsInactive.Exclude);
+        if (tables.Length > 0)
+        {
+            initialSpawnTable = tables[UnityEngine.Random.Range(0, tables.Length)];
         }
     }
 
