@@ -64,11 +64,12 @@ MonoBehaviour:
   drinkIndicator: {fileID: 3322590922952960687}
   indicatorRenderer: {fileID: 3324919796760720507}
   greenMaterial: {fileID: 2100000, guid: 2c1e9cf8a26241d46ae7b03dc87f3215, type: 2}
-  yellowMaterial: {fileID: 2100000, guid: 512d7f4075c4d5248b6e4eedc115d526, type: 2}
   redMaterial: {fileID: 2100000, guid: 70b8c4ef4216db2498941c6ddb3f142a, type: 2}
   soldierList: {fileID: 5835014519109288855}
   soldierPrefab: {fileID: 6498276397956993381, guid: f5a3fd63f714c6f4d8efd7ceb4c7b1b5, type: 3}
   blackMaterial: {fileID: 2100000, guid: 4d0d878d684d1784e92d506c9b392e05, type: 2}
+  brassBeerMaterial: {fileID: 2100000, guid: d02d8bd0a95e1a74f9bedd1a9349566a, type: 2}
+  redBeerMaterial: {fileID: 2100000, guid: d732d6f24dc81654f9aa0a53baa1725e, type: 2}
   lowTalkingVolume: 0.1
   mediumTalkingVolume: 0.22
   highTalkingVolume: 0.4

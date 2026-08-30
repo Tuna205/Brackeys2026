@@ -575,8 +575,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   beers: 
   beerHolder: {fileID: 5671786780047102462}
-  whiteBeerMaterial: {fileID: 2100000, guid: 512d7f4075c4d5248b6e4eedc115d526, type: 2}
-  redBeerMaterial: {fileID: 2100000, guid: 70b8c4ef4216db2498941c6ddb3f142a, type: 2}
+  whiteBeerMaterial: {fileID: 2100000, guid: d02d8bd0a95e1a74f9bedd1a9349566a, type: 2}
+  redBeerMaterial: {fileID: 2100000, guid: d732d6f24dc81654f9aa0a53baa1725e, type: 2}
   darkBeerMaterial: {fileID: 2100000, guid: 4d0d878d684d1784e92d506c9b392e05, type: 2}
 --- !u!143 &2622232263812784233
 CharacterController:
